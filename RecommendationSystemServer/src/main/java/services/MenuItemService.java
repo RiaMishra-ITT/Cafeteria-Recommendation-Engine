@@ -4,37 +4,52 @@
  */
 package services;
 
-import database.Database;
+import customexception.FailedToAddItemException;
+import customexception.FailedToUpdateItemException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.sql.SQLException;
+import java.util.List;
 import models.MenuItem;
+import repositories.Interfaces.IMenuItemRepository;
+import repositories.MenuItemRepository;
+import services.Interfaces.IMenuItemService;
 
 
-public class MenuItemService {
-    private static Database database = new Database();
+public class MenuItemService implements IMenuItemService{
+    private static final IMenuItemRepository menuItemRepository = new MenuItemRepository();
     
-    public String addMenuItem(ObjectInputStream input) throws IOException, ClassNotFoundException {
-       try
-       {
-           System.out.println("add menu item");
-           System.out.println(input.readObject());
-           MenuItem menuItem = (MenuItem) input.readObject();
-           database.addMenuItem(menuItem);
-           return "Item added successfully";
-       } catch (Exception ex) {
-           return "Failed to add item";
+    public void addMenuItem(ObjectInputStream input) throws IOException, ClassNotFoundException, SQLException, FailedToAddItemException {
+       MenuItem menuItem = (MenuItem) input.readObject();
+       int totalRows = menuItemRepository.addMenuItem(menuItem);
+       if(totalRows <= 0) {
+           throw new FailedToAddItemException("Failed to add item");
        }
     }
     
-    public static void updateMenuItem() {
-        
+
+    @Override
+    public MenuItem getMenuItemById(MenuItem menuItem) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
-    public static void deleteMenuItem() {
-        
+
+    @Override
+    public void removeMenuItem(ObjectInputStream input) throws SQLException, FailedToUpdateItemException, IOException, ClassNotFoundException {
+        MenuItem menuItem = (MenuItem) input.readObject();
+        menuItemRepository.removeMenuItem(menuItem);
     }
-    
-    public static void getMenuItem() {
-        
+
+    @Override
+    public List<MenuItem> getAllMenuItem() throws SQLException {
+        return menuItemRepository.getAllMenuItem();
+    }
+
+    @Override
+    public void updateMenuItem(ObjectInputStream input) throws SQLException, FailedToUpdateItemException, IOException, ClassNotFoundException {
+        MenuItem menuItem = (MenuItem) input.readObject();
+        int totalRows = menuItemRepository.updateMenuItem(menuItem);
+        if(totalRows <= 0) {
+            throw new FailedToUpdateItemException("Failed to update item");
+        }
     }
 }

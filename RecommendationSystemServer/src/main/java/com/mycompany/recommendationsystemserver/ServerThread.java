@@ -32,10 +32,7 @@ class ServerThread implements Runnable {
             input = new ObjectInputStream(socket.getInputStream());
             output = new ObjectOutputStream(socket.getOutputStream());
             while (true) {
-                String response = ServerOperations.handleOperations(input);;
-                System.out.println(response);
-                output.writeUTF(response);
-                output.flush();
+                ServerOperations.handleOperations(input,output);
             }
         } catch (IOException ex) {
             ex.printStackTrace();

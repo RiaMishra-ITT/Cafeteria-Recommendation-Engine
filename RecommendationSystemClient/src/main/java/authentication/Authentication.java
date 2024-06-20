@@ -32,14 +32,14 @@ public class Authentication {
             client.sendRequest("login", userId, name);
             String response = (String) client.receiveResponse();
             System.out.println("Server Response: " + response);
-            if(response != "Unable to login") {
+            if(!"Unable to login".equals(response)) {
                 role = response;
                 break;
             }
         }
         
         if(role.equals("Admin")) {
-            AdminOperation adminOperation = new AdminOperation();
+            AdminOperation adminOperation = new AdminOperation(client);
             adminOperation.showMenu();
         }
     }

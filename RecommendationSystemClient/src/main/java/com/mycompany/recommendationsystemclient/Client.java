@@ -40,9 +40,13 @@ public class Client {
 
     public void sendRequest(String action, Object... params) {
         try {
+            System.out.println(action);
             output.writeUTF(action);
-            for (Object param : params) {
+            if(params != null) {
+                for (Object param : params) {
+                System.out.println("reading");
                 output.writeObject(param);
+            }
             }
             
             output.flush();
@@ -58,6 +62,10 @@ public class Client {
             e.printStackTrace();
         }
         return null;
+    }
+    
+    public ObjectInputStream receiveObjectResponse() {
+        return input;
     }
 
     public void close() {

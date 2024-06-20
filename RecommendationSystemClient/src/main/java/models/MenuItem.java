@@ -8,10 +8,17 @@ import java.io.Serializable;
 
 
 public class MenuItem implements Serializable{
-    public int itemId;
+    public int menuItemId;
     public String itemName;
     public double price;
-    public String availablityStatus;
-    public int itemTypeId;
-    public String itemType;
+    public String availbilityStatus;
+    public int mealTypeId;
+    
+    public MenuItem(int menuItemId, String itemName, double price, String availbilityStatus, int mealTypeId) {
+        this.menuItemId = menuItemId;
+        this.itemName = itemName;
+        this.price = price;
+        this.availbilityStatus = availbilityStatus;
+        this.mealTypeId = mealTypeId;
+    }
 }

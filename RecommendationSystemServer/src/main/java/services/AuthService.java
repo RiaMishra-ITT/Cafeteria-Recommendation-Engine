@@ -14,12 +14,14 @@ import services.Interfaces.IAuthService;
 
 public class AuthService implements IAuthService {
     Database database = new Database();
+    public String username = "";
     @Override
     public User Login(ObjectInputStream input) throws IOException, ClassNotFoundException, UserNotFoundException {
         String userId;
         userId = input.readObject().toString();
         String name = input.readObject().toString();
         User user = database.getUserByIdAndName(userId, name);
+        username = user.name;
         if(user == null) {
             throw new UserNotFoundException("User not found");
         }
