@@ -5,7 +5,9 @@
 package authentication;
 
 import admin.AdminOperation;
+import chef.ChefOperation;
 import com.mycompany.recommendationsystemclient.Client;
+import employee.EmployeeOperation;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -41,6 +43,12 @@ public class Authentication {
         if(role.equals("Admin")) {
             AdminOperation adminOperation = new AdminOperation(client);
             adminOperation.showMenu();
+        } else if(role.equals("Chef")) {
+            ChefOperation chefOperation = new ChefOperation(client);
+            chefOperation.showMenu();
+        }else if(role.equals("Employee")) {
+            EmployeeOperation employeeOperation = new EmployeeOperation(client);
+            employeeOperation.showMenu();
         }
     }
     

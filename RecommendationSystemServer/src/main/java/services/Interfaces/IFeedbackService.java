@@ -4,6 +4,8 @@
  */
 package services.Interfaces;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.sql.SQLException;
 import java.util.List;
 import models.Feedback;
@@ -14,4 +16,5 @@ import models.Feedback;
  */
 public interface IFeedbackService {
     List<Feedback> getFeedbackByItemId(int menuItemId) throws SQLException;
+    void submitFeedback(ObjectInputStream input) throws SQLException, IOException, ClassNotFoundException;
 }

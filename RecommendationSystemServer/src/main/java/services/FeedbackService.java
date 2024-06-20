@@ -4,19 +4,30 @@
  */
 package services;
 
+import customexception.FailedToUpdateItemException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.sql.SQLException;
 import java.util.List;
 import models.Feedback;
+import models.MenuItem;
 import repositories.FeedbackRepository;
 import repositories.Interfaces.IFeedbackRepository;
+import services.Interfaces.IFeedbackService;
 
 
-public class FeedbackService {
+public class FeedbackService implements IFeedbackService{
     private SemanticAnalysisService semanticAnalysisService = new SemanticAnalysisService();
     private IFeedbackRepository feedbackRepository = new FeedbackRepository();
-    List<Feedback> getFeedbackByItemId(int menuItemId) throws SQLException {
+    
+    public List<Feedback> getFeedbackByItemId(int menuItemId) throws SQLException {
         List<Feedback> feedbackList = feedbackRepository.getFeedbackByItemId(menuItemId);
         return feedbackList;
+    }
+    
+    public void submitFeedback(ObjectInputStream input) throws SQLException, IOException, ClassNotFoundException  {
+        Feedback feedback = (Feedback) input.readObject();
+        feedbackRepository.submitFeedback(feedback);
     }
     
     String calculateSentiment(int menuItemId) throws SQLException{

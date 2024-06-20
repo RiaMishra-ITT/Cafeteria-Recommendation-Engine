@@ -12,7 +12,10 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 import models.MenuItem;
 import models.User;
+import services.ChefService;
+import services.FeedbackService;
 import services.Interfaces.IAuthService;
+import services.Interfaces.IFeedbackService;
 import services.Interfaces.IMenuItemService;
 import services.Interfaces.IRoleService;
 import services.RecommendationEngineService;
@@ -21,7 +24,8 @@ import services.RoleService;
 public class ServerOperations {
     public static void handleOperations(ObjectInputStream input, ObjectOutputStream output) throws IOException, ClassNotFoundException {
         IMenuItemService menuItemService = new MenuItemService();
-        RecommendationEngineService recommendationService = new RecommendationEngineService();
+        IFeedbackService feedbackService = new FeedbackService();
+        ChefService chefService = new ChefService();
         try
         {
             String action = input.readUTF();
@@ -56,8 +60,13 @@ public class ServerOperations {
                     output.writeUTF("Item deleted succesfully");
                     output.flush();
                 case "rollOutItem":
-                    List<MenuItem> menuItems = menuItemService.getAllMenuItem();
-                    output.writeObject(menuItems);
+                    List<MenuItem> nextDayItems = chefService.getFoodItemForNextDay(input);
+                    output.writeObject(nextDayItems);
+                    output.flush();
+                    break;
+                case "submitFeedback":
+                    feedbackService.submitFeedback(input);
+                    output.writeUTF("Feedback submitted succesfully");
                     output.flush();
                     break;
                 default:

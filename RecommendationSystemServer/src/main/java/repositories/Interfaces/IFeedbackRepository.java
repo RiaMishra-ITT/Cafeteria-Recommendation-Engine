@@ -14,4 +14,5 @@ import models.Feedback;
  */
 public interface IFeedbackRepository {
     List<Feedback> getFeedbackByItemId(int menuItemId) throws SQLException;
+    int submitFeedback(Feedback feedback) throws SQLException;
 }

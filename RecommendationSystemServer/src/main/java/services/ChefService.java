@@ -4,14 +4,22 @@
  */
 package services;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.sql.SQLException;
+import java.util.List;
+import models.MenuItem;
 
 /**
  *
  * @author ria.mishra
  */
 public class ChefService {
-    public void getFoodItemForNextDay(ObjectInputStream input) {
-        
+    private RecommendationEngineService recommendationService= new RecommendationEngineService();
+    
+    public List<MenuItem> getFoodItemForNextDay(ObjectInputStream input)throws SQLException,IOException,ClassNotFoundException {
+        int mealTypeId = Integer.parseInt(input.readObject().toString());
+        int noOfItems = Integer.parseInt(input.readObject().toString());
+        return recommendationService.getFoodItemForNextDay(mealTypeId, noOfItems);
     }
 }

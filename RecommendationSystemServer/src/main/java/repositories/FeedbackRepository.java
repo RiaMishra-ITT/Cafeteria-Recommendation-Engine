@@ -19,4 +19,9 @@ public class FeedbackRepository implements IFeedbackRepository {
    public List<Feedback> getFeedbackByItemId(int menuItemId) throws SQLException {
        return database.getFeedbackByItemId(menuItemId);
    } 
+   
+   @Override
+   public int submitFeedback(Feedback feedback) throws SQLException {
+       return database.submitFeedback(feedback);
+   }
 }

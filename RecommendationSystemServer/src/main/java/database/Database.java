@@ -143,4 +143,17 @@ public class Database {
         
         return feedbacks;
     }
+    
+    public int submitFeedback(Feedback feedback) throws SQLException{
+        String sql = "INSERT INTO feedback (Comment, Rating,Date,MenuItemId,UserId) VALUES (?, ?, ?,?,?)";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1, feedback.comment);
+        pstmt.setString(2, feedback.rating);
+        pstmt.setString(3, feedback.date);
+        pstmt.setInt(4,feedback.menuItemId);
+        pstmt.setInt(5,feedback.userId);
+
+        int rowInserted = pstmt.executeUpdate();
+        return rowInserted;
+    }
 }

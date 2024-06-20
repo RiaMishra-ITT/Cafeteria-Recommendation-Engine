@@ -46,10 +46,10 @@ public  class MenuItemService {
         List<MenuItem> menuItems;
         try {
             menuItems = (List<MenuItem>) client.receiveObjectResponse().readObject();
-            System.out.println("Item Name \t Item Price \t Item Status \t Meal Type");
+            System.out.println("Id \t Item Name \t Item Price \t Item Status \t Meal Type");
             for(MenuItem menuItem : menuItems) {
                 String mealType = menuItem.mealTypeId == 1? "Breakfast" : menuItem.menuItemId == 2 ?  "Lunch" : "Dinner";
-                System.out.printf("%-15s \t %-10.2f \t %-12s \t %-10s%n", menuItem.itemName, menuItem.price, menuItem.availbilityStatus, mealType);
+                System.out.printf("%-15s \t %-15s \t %-10.2f \t %-12s \t %-10s%n", menuItem.menuItemId,menuItem.itemName, menuItem.price, menuItem.availbilityStatus, mealType);
 
             }
 

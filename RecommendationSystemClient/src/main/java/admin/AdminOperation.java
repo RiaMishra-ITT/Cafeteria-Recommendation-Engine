@@ -38,6 +38,8 @@ public class AdminOperation {
             menuItemService.viewAllItems();
         } else if( input == 4) {
             menuItemService.deleteMenuItem();
+        } else if(input == 5) {
+            System.exit(0);
         }
     }
 }
