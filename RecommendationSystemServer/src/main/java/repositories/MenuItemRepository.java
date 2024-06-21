@@ -37,8 +37,12 @@ public class MenuItemRepository implements IMenuItemRepository{
     }
 
     @Override
-    public MenuItem getMenuItemById(MenuItem menuItem) throws SQLException{
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public MenuItem getMenuItemById(int menuItemId) throws SQLException{
+        return database.getMenuItemById(menuItemId);
     }
     
+    @Override
+    public List<MenuItem> getItemsByMealType(int mealTypeId)throws SQLException {
+        return database.getItemsByMealType(mealTypeId);
+    }
 }

@@ -23,6 +23,7 @@ public class ChefOperation {
         while(true) {
             System.out.println("----Operations---");
             System.out.println("1. Roll out item");
+            System.out.println("2. Exit");
             int input = scanner.nextInt();
             this.handleUserInput(input);
         }
@@ -32,6 +33,8 @@ public class ChefOperation {
         RollOutItemService rollOutItemService = new RollOutItemService(client);
         if(input == 1) {
             rollOutItemService.rollOutItem();
+        } else if(input == 2 ) {
+            System.exit(1);
         }
     } 
 }

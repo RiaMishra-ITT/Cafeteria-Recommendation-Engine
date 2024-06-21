@@ -1,3 +1,4 @@
+D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\services\UserNotificationService.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\models\MenuItem.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\database\Database.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\repositories\Interfaces\IRoleRepository.java
@@ -7,15 +8,19 @@ D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\serv
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\customexception\FailedToAddItemException.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\models\MealType.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\services\AuthService.java
+D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\repositories\Interfaces\IUserRepository.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\models\User.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\repositories\Interfaces\IFeedbackRepository.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\services\RecommendationEngineService.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\services\Interfaces\IFeedbackService.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\repositories\Interfaces\IMenuItemRepository.java
+D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\repositories\Interfaces\IUserNotificationRepository.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\com\mycompany\recommendationsystemserver\ServerThread.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\services\MenuItemService.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\com\mycompany\recommendationsystemserver\RecommendationSystemServer.java
+D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\repositories\UserRepository.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\customexception\FailedToUpdateItemException.java
+D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\services\Interfaces\IUserNotificationService.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\models\Feedback.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\models\Role.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\services\FeedbackService.java
@@ -24,6 +29,7 @@ D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\serv
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\repositories\FeedbackRepository.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\repositories\MenuItemRepository.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\services\SemanticAnalysisService.java
+D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\repositories\UserNotificationRepository.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\services\Interfaces\IAuthService.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\repositories\RoleRepository.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\services\Interfaces\IRoleService.java
@@ -31,5 +37,7 @@ D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\serv
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\com\mycompany\recommendationsystemserver\ServerOperations.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\com\mycompany\recommendationsystemserver\Server.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\customexception\UserNotFoundException.java
+D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\models\UserNotifcation.java
+D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\models\RolledOutItem.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\services\Interfaces\IRecommendationEngineService.java
 D:\Cafeteria-Recommendation-Engine\RecommendationSystemServer\src\main\java\models\ItemType.java

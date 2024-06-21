@@ -6,21 +6,26 @@ package models;
 
 import java.io.Serializable;
 
-
-public class MenuItem implements Serializable{
+/**
+ *
+ * @author ria.mishra
+ */
+public class RolledOutItem implements Serializable{
     public int menuItemId;
     public String itemName;
     public double price;
     public String availbilityStatus;
     public int mealTypeId;
+    public String rating;
+    public String sentiment;
     
-    public MenuItem(int menuItemId, String itemName, double price, String availbilityStatus, int mealTypeId) {
+    public RolledOutItem(int menuItemId, String itemName, double price, String availbilityStatus, int mealTypeId, String rating, String sentiment) {
         this.menuItemId = menuItemId;
         this.itemName = itemName;
         this.price = price;
         this.availbilityStatus = availbilityStatus;
         this.mealTypeId = mealTypeId;
+        this.rating = rating;
+        this.sentiment = sentiment;
     }
-    
-    public MenuItem() {}
 }

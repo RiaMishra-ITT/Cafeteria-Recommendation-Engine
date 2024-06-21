@@ -34,9 +34,11 @@ public class EmployeeOperation {
     private void handleUserInput(int input) {
         EmployeeService employeeService = new EmployeeService(client);
         if(input == 1) {
-            //menuItemService.addMenuItem();
+            employeeService.viewRolledOutItems();
         } else if( input == 2) {
             employeeService.submitFeedback();
-        } 
+        } else if (input == 4) {
+            System.exit(1);
+        }
     }
 }

@@ -17,5 +17,6 @@ public interface IMenuItemRepository {
     public void removeMenuItem(MenuItem menuItem) throws SQLException;
     public List<MenuItem> getAllMenuItem() throws SQLException;
     public int updateMenuItem(MenuItem menuItem) throws SQLException;
-    public MenuItem getMenuItemById(MenuItem menuItem) throws SQLException;
+    MenuItem getMenuItemById(int menuItemId) throws SQLException;
+    List<MenuItem> getItemsByMealType(int mealTypeId)throws SQLException;
 }

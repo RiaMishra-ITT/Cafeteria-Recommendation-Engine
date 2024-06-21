@@ -8,14 +8,13 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.sql.SQLException;
 import java.util.List;
-import models.Feedback;
+import models.RolledOutItem;
 
 /**
  *
  * @author ria.mishra
  */
-public interface IFeedbackService {
-    List<Feedback> getFeedbackByItemId(int menuItemId) throws SQLException;
-    void submitFeedback(ObjectInputStream input) throws SQLException, IOException, ClassNotFoundException;
-    String calculateSentiment(int menuItemId) throws SQLException;
+public interface IUserNotificationService {
+    void addNotification(ObjectInputStream input) throws IOException, ClassNotFoundException, SQLException;
+    List<RolledOutItem> getRolledOutItemNotifications() throws IOException, ClassNotFoundException, SQLException;
 }

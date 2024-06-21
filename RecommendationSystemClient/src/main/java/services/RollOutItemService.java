@@ -24,18 +24,30 @@ public class RollOutItemService {
     }
     
     public void rollOutItem() {
-        System.out.println("Enter meal type");
+        System.out.println("Available meal types");
+        System.out.println("1. Breakfast");
+        System.out.println("2. Lunch");
+        System.out.println("3. Dinner");
+        System.out.println("Enter meal type id");
         String mealType = scanner.nextLine();
         System.out.println("How many items you want to roll out?");
         int noOfItems = scanner.nextInt();
+        scanner.nextLine();
         client.sendRequest("rollOutItem", mealType,noOfItems);
         try {
             List<MenuItem> menuItems = (List<MenuItem>) client.receiveObjectResponse().readObject();
-            System.out.println("Item Name \t Item Price \t Item Status \t Meal Type");
+
+            System.out.println("Id \t Item Name \t Item Price \t Item Status \t Meal Type");
             for(MenuItem menuItem : menuItems) {
-                System.out.printf("%-15s \t %-10.2f \t %-12s \t %-10s%n", menuItem.itemName, menuItem.price, menuItem.availbilityStatus, mealType);
+                System.out.printf("%-15s \t %-15s \t %-10.2f \t %-12s \t %-10s%n", menuItem.menuItemId,menuItem.itemName, menuItem.price, menuItem.availbilityStatus, mealType);
 
             }
+            
+            System.out.println("Enter items id you want to select by comma seperated");
+            String input = scanner.nextLine();
+            client.sendRequest("addUserNotification", input);
+            String response = (String) client.receiveResponse();
+            System.out.println("Server Response: " + response);
 
         } catch (IOException ex) {
             Logger.getLogger(MenuItemService.class.getName()).log(Level.SEVERE, null, ex);

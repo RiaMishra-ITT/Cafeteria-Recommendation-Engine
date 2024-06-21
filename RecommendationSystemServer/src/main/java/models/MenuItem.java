@@ -21,4 +21,6 @@ public class MenuItem implements Serializable{
         this.availbilityStatus = availbilityStatus;
         this.mealTypeId = mealTypeId;
     }
+    
+    public MenuItem() {}
 }

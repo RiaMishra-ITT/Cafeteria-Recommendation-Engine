@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import models.MenuItem;
 import services.Interfaces.IFeedbackService;
+import services.Interfaces.IMenuItemService;
 
 /**
  *
@@ -16,13 +17,15 @@ import services.Interfaces.IFeedbackService;
  */
 public class RecommendationEngineService {
     private FeedbackService feedbackService = new FeedbackService();
+    private IMenuItemService menuItemService = new MenuItemService();
     public List<MenuItem> getFoodItemForNextDay(int mealTypeId, int noOfItems) throws SQLException{
-        List<MenuItem> menuItems = new ArrayList<>();
+        List<MenuItem> menuItems = menuItemService.getItemsByMealType(mealTypeId);
         List<MenuItem> positiveItems = new ArrayList<>();
         List<MenuItem> negativeItems = new ArrayList<>();
         List<MenuItem> neutralItems = new ArrayList<>();
         for(MenuItem menuItem : menuItems) {
             String result = feedbackService.calculateSentiment(mealTypeId);
+            System.out.println(result);
             if(result.equals("Positive") ) {
                 positiveItems.add(menuItem);
             } else if(result.equals("Negative") ) {

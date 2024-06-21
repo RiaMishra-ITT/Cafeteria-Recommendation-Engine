@@ -4,35 +4,43 @@
  */
 package services;
 
-import edu.stanford.nlp.ling.CoreAnnotations;
-import edu.stanford.nlp.pipeline.Annotation;
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-import edu.stanford.nlp.sentiment.SentimentCoreAnnotations;
-import edu.stanford.nlp.util.CoreMap;
-import edu.stanford.nlp.util.PropertiesUtils;
-import java.util.Properties;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import services.Interfaces.ISemanticaAnalysis;
 
 /**
  *
  * @author ria.mishra
  */
-public class SemanticAnalysisService {
-    private final StanfordCoreNLP pipeline;
+public class SemanticAnalysisService implements ISemanticaAnalysis {
+    private static final Set<String> POSITIVE_WORDS = new HashSet<>(Arrays.asList(
+        "good", "happy", "joy", "excellent", "great", "positive", "fortunate", "correct", "superior", "tasty", "yummy"
+    ));
 
-    public SemanticAnalysisService() {
-        Properties props = PropertiesUtils.asProperties(
-                "annotators", "tokenize,ssplit,pos,lemma,parse,sentiment",
-                "coref.algorithm", "neural"
-        );
-        this.pipeline = new StanfordCoreNLP(props);
-    }
-
+    private static final Set<String> NEGATIVE_WORDS = new HashSet<>(Arrays.asList(
+            "bad", "sad", "angry", "poor", "terrible", "negative", "unfortunate", "wrong", "inferior"
+    ));
+        
     public String analyzeSentiment(String text) {
-        Annotation annotation = pipeline.process(text);
-        String sentiment = "";
-        for (CoreMap sentence : annotation.get(CoreAnnotations.SentencesAnnotation.class)) {
-            sentiment = sentence.get(SentimentCoreAnnotations.SentimentClass.class);
+        int positiveCount = 0;
+        int negativeCount = 0;
+        String[] words = text.toLowerCase().split("\\W+");
+        for (String word : words) {
+            if (POSITIVE_WORDS.contains(word)) {
+                positiveCount++;
+            } else if (NEGATIVE_WORDS.contains(word)) {
+                negativeCount++;
+            }
         }
-        return sentiment;
+
+        if (positiveCount > negativeCount) {
+            return "Positive";
+        } else if (negativeCount > positiveCount) {
+            return "Negative";
+        } else {
+            return "Neutral";
+        }
     }
 }

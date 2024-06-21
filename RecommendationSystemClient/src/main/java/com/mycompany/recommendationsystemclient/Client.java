@@ -43,10 +43,10 @@ public class Client {
             System.out.println(action);
             output.writeUTF(action);
             if(params != null) {
-                for (Object param : params) {
                 System.out.println("reading");
+                for (Object param : params) {
                 output.writeObject(param);
-            }
+                }
             }
             
             output.flush();

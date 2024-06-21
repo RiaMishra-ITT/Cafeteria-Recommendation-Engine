@@ -52,4 +52,9 @@ public class MenuItemService implements IMenuItemService{
             throw new FailedToUpdateItemException("Failed to update item");
         }
     }
+    
+    @Override
+    public List<MenuItem> getItemsByMealType(int mealTypeId) throws SQLException {
+        return menuItemRepository.getItemsByMealType(mealTypeId);
+    }
 }

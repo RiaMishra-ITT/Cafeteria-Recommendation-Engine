@@ -16,6 +16,7 @@ import models.Feedback;
 import models.MenuItem;
 import models.Role;
 import models.User;
+import models.UserNotifcation;
 
 
 public class Database {
@@ -155,5 +156,59 @@ public class Database {
 
         int rowInserted = pstmt.executeUpdate();
         return rowInserted;
+    }
+    
+    public int addUserNotification(List<UserNotifcation> userNotifications) throws SQLException {
+        String sql = "insert into UserNotification(NotificationId,UserId,Datetime,MenuItemId) values(?,?,?,?)";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        for(UserNotifcation notification : userNotifications) {
+            System.out.println(notification.menuItemId);
+            pstmt.setInt(1,notification.notificationId);
+            pstmt.setInt(2,notification.userId);
+            pstmt.setString(3,notification.dateTime);
+             pstmt.setInt(4,notification.menuItemId);
+            pstmt.addBatch();
+        }
+        
+        int[] results = pstmt.executeBatch();
+        return results.length;
+    }
+    
+    public List<User> getUserByRole(int roleId) throws SQLException {
+        String sql = "Select * from Users where roleId = ?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setInt(1, roleId);
+        ResultSet rs = pstmt.executeQuery();
+        List<User> users = new ArrayList<>();
+        while(rs.next()) {
+            users.add(new User(rs.getInt("UserID"), rs.getString("Name"), rs.getInt("RoleId")));
+        }
+        
+        return users;
+    }
+    
+    public List<UserNotifcation> getRolledOutItemNotifications() throws SQLException {
+        String sql = "Select * from UserNotification where NotificationId = 8";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        ResultSet rs = pstmt.executeQuery();
+        List<UserNotifcation> notifications = new ArrayList<>();
+        while(rs.next()) {
+            notifications.add(new UserNotifcation(rs.getInt("UserNotificationId"), rs.getInt("NotificationId"), rs.getInt("UserId"),rs.getString("DateTime"),rs.getInt("MenuItemId")));
+        }
+        
+        return notifications;
+    }
+    
+    public MenuItem getMenuItemById(int menuItemId) throws SQLException {
+        String sql = "Select * from MenuItem where menuItemId = ?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setInt(1, menuItemId);
+        ResultSet rs = pstmt.executeQuery();
+        MenuItem menuItem = new MenuItem();
+        while(rs.next()) {
+            menuItem = new MenuItem(rs.getInt("MenuItemId"),rs.getString("ItemName"),
+                    rs.getDouble("Price"),rs.getString("AvailbilityStatus"),rs.getInt("MealTypeId"));
+        }
+        return menuItem;
     }
 }

@@ -42,7 +42,7 @@ public  class MenuItemService {
     }
     
     public void viewAllItems(){
-        client.sendRequest("viewAllItems", "");
+        client.sendRequest("viewAllItems", null);
         List<MenuItem> menuItems;
         try {
             menuItems = (List<MenuItem>) client.receiveObjectResponse().readObject();
@@ -75,6 +75,7 @@ public  class MenuItemService {
             
             System.out.println("Enter the item id you want to update");
             int id = scanner.nextInt();
+            MenuItem menuItem = this.getItemById(menuItems,id );
             System.out.println("Which property you want to update");
             System.out.println("1) Item name");
             System.out.println("2) Item price");
@@ -85,17 +86,17 @@ public  class MenuItemService {
             scanner.nextLine();
             System.out.println("Enter value");
             if(propertyId == 1) {
-                menuItems.get(id - 1).itemName = scanner.nextLine();
+                menuItem.itemName = scanner.nextLine();
             } else if(propertyId == 2) {
-                menuItems.get(id - 1).price = scanner.nextInt();
+                menuItem.price = scanner.nextInt();
                 scanner.nextLine();
             } else if(propertyId == 3) {
-                menuItems.get(id -1).availbilityStatus = scanner.nextLine();
+                menuItem.availbilityStatus = scanner.nextLine();
             } else if(propertyId == 4) {
-                menuItems.get(id - 1).mealTypeId = scanner.nextInt();
+                menuItem.mealTypeId = scanner.nextInt();
                 scanner.nextLine();
             }
-            client.sendRequest("updateMenuItem", menuItems.get(id -1));
+            client.sendRequest("updateMenuItem", menuItem);
             String response = (String) client.receiveResponse();
             System.out.println("Server Response: " + response);
         } catch (IOException ex) {
@@ -104,6 +105,15 @@ public  class MenuItemService {
             Logger.getLogger(MenuItemService.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+    }
+    
+    public MenuItem getItemById(List<MenuItem> items, int id) {
+        for (MenuItem item : items) {
+            if (item.menuItemId == id) {
+                return item; 
+            }
+        }
+        return null;
     }
     
     public void deleteMenuItem() {
@@ -120,7 +130,8 @@ public  class MenuItemService {
             
             System.out.println("Enter the item id you want to delete");
             int id = scanner.nextInt();
-            client.sendRequest("deleteMenuItem", menuItems.get(id -1));
+            MenuItem menuItem = this.getItemById(menuItems, id);
+            client.sendRequest("deleteMenuItem", menuItem);
             String response = (String) client.receiveResponse();
             System.out.println("Server Response: " + response);
         } catch (IOException ex) {

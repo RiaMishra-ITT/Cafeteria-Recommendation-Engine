@@ -18,6 +18,7 @@ import models.User;
 public class Authentication {
     private Scanner scanner = new Scanner(System.in);
     private Client client;
+    public static int userId = 0;
 
     public Authentication(Client client) {
         this.client = client;
@@ -34,8 +35,11 @@ public class Authentication {
             client.sendRequest("login", userId, name);
             String response = (String) client.receiveResponse();
             System.out.println("Server Response: " + response);
+            String user = (String) client.receiveResponse();
             if(!"Unable to login".equals(response)) {
                 role = response;
+                Authentication.userId = Integer.parseInt(user);
+                System.out.println(Authentication.userId);
                 break;
             }
         }

@@ -4,11 +4,20 @@
  */
 package services;
 
+import authentication.Authentication;
 import com.mycompany.recommendationsystemclient.Client;
+import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import models.Feedback;
 import models.MenuItem;
+import models.RolledOutItem;
 
 /**
  *
@@ -38,5 +47,31 @@ public class EmployeeService {
         client.sendRequest("submitFeedback", feedback);
         String response = (String) client.receiveResponse();
         System.out.println("Server Response: " + response);
+    }
+    
+    public void viewRolledOutItems() {
+        client.sendRequest("viewRolledOutItem", null);
+        List<RolledOutItem> items;
+        try {
+            items = (List<RolledOutItem>) client.receiveObjectResponse().readObject();
+            Set<Integer> seenIds = new HashSet<>();
+            List<RolledOutItem> uniqueItems = new ArrayList<>();
+            for(RolledOutItem item : items) {
+                if(seenIds.add(item.menuItemId)) {
+                    uniqueItems.add(item);
+                }
+            }
+            System.out.println("Id \t Item Name \t Item Price \t Item Status \t Meal Type \t Rating \t Sentiment");
+            for(RolledOutItem item : uniqueItems) {
+                String mealType = item.mealTypeId == 1? "Breakfast" : item.menuItemId == 2 ?  "Lunch" : "Dinner";
+                System.out.printf("%-15s \t %-15s \t %-10.2f \t %-12s \t %-10s \t %-10s \t %-10s%n", item.menuItemId,item.itemName, item.price, item.availbilityStatus, mealType,item.rating,item.sentiment);
+
+            }
+
+        } catch (IOException ex) {
+            Logger.getLogger(MenuItemService.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(MenuItemService.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

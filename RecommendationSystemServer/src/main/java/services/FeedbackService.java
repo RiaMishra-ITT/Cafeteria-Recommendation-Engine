@@ -30,7 +30,7 @@ public class FeedbackService implements IFeedbackService{
         feedbackRepository.submitFeedback(feedback);
     }
     
-    String calculateSentiment(int menuItemId) throws SQLException{
+    public String calculateSentiment(int menuItemId) throws SQLException{
         List<Feedback> feedbackList = this.getFeedbackByItemId(menuItemId);
         int positiveCount = 0; 
         int negativeCount = 0; 

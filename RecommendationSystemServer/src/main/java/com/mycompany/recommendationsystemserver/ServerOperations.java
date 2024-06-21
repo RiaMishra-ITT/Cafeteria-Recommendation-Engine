@@ -11,6 +11,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
 import models.MenuItem;
+import models.RolledOutItem;
 import models.User;
 import services.ChefService;
 import services.FeedbackService;
@@ -18,14 +19,17 @@ import services.Interfaces.IAuthService;
 import services.Interfaces.IFeedbackService;
 import services.Interfaces.IMenuItemService;
 import services.Interfaces.IRoleService;
+import services.Interfaces.IUserNotificationService;
 import services.RecommendationEngineService;
 import services.RoleService;
+import services.UserNotificationService;
 
 public class ServerOperations {
     public static void handleOperations(ObjectInputStream input, ObjectOutputStream output) throws IOException, ClassNotFoundException {
         IMenuItemService menuItemService = new MenuItemService();
         IFeedbackService feedbackService = new FeedbackService();
         ChefService chefService = new ChefService();
+        IUserNotificationService userNotificationService = new UserNotificationService();
         try
         {
             String action = input.readUTF();
@@ -37,6 +41,8 @@ public class ServerOperations {
                     IRoleService roleService = new RoleService();
                     String role = roleService.getRoleById(user.roleId);
                     output.writeUTF(role);
+                    String userId = Integer.toString(user.userId);
+                    output.writeUTF(userId);
                     output.flush();
                     break;
                 case "addMenuItem":
@@ -45,7 +51,6 @@ public class ServerOperations {
                     output.flush();
                     break;
                 case "viewAllItems":
-                    input.readObject();
                     List<MenuItem> menuItems = menuItemService.getAllMenuItem();
                     output.writeObject(menuItems);
                     output.flush();
@@ -69,6 +74,15 @@ public class ServerOperations {
                     output.writeUTF("Feedback submitted succesfully");
                     output.flush();
                     break;
+                case "addUserNotification":
+                    userNotificationService.addNotification(input);
+                    output.writeUTF("Item rolled out succesfully");
+                    output.flush();
+                case "viewRolledOutItem":
+                    List<RolledOutItem> items =  userNotificationService.getRolledOutItemNotifications();
+                    System.out.println(items.size());
+                    output.writeObject(items);
+                    output.flush();
                 default:
                     break;
             }
