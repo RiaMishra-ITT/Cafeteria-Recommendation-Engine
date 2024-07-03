@@ -15,7 +15,7 @@ public class UserNotifcation {
     public String dateTime;
     public int menuItemId;
     
-    public UserNotifcation(int userNotificationId, int notificationId, int userId, String dateTime, int menuItemId) {
+        public UserNotifcation(int userNotificationId, int notificationId, int userId, String dateTime, int menuItemId) {
         this.userNotificationId = userNotificationId;
         this.notificationId = notificationId;
         this.userId = userId;

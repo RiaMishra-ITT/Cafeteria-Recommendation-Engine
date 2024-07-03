@@ -10,18 +10,24 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
+import models.DiscardItemInfo;
 import models.MenuItem;
+import models.Notification;
 import models.RolledOutItem;
 import models.User;
 import services.ChefService;
+import services.DiscardItemService;
 import services.FeedbackService;
 import services.Interfaces.IAuthService;
+import services.Interfaces.IDiscardItemService;
 import services.Interfaces.IFeedbackService;
 import services.Interfaces.IMenuItemService;
 import services.Interfaces.IRoleService;
+import services.Interfaces.IUserActivityService;
 import services.Interfaces.IUserNotificationService;
 import services.RecommendationEngineService;
 import services.RoleService;
+import services.UserActivityService;
 import services.UserNotificationService;
 
 public class ServerOperations {
@@ -30,6 +36,8 @@ public class ServerOperations {
         IFeedbackService feedbackService = new FeedbackService();
         ChefService chefService = new ChefService();
         IUserNotificationService userNotificationService = new UserNotificationService();
+        IDiscardItemService discardItemService = new DiscardItemService();
+        IUserActivityService activityService = new UserActivityService();
         try
         {
             String action = input.readUTF();
@@ -78,11 +86,28 @@ public class ServerOperations {
                     userNotificationService.addNotification(input);
                     output.writeUTF("Item rolled out succesfully");
                     output.flush();
+                    break;
                 case "viewRolledOutItem":
                     List<RolledOutItem> items =  userNotificationService.getRolledOutItemNotifications();
                     System.out.println(items.size());
                     output.writeObject(items);
                     output.flush();
+                    break;
+                case "viewDiscardItems":
+                    List<DiscardItemInfo> discardItems =  discardItemService.getDiscardedItemsWithRatings();
+                    output.writeObject(discardItems);
+                    output.flush();
+                    break;
+                case "recordActivity":
+                    activityService.addUserActivity(input);
+                    output.writeUTF("Activity recoreded succesfully");
+                    output.flush();
+                    break;
+                case "usernotification":
+                    List<Notification> notifications =  userNotificationService.getUserNotifications(input);
+                    output.writeObject(notifications);
+                    output.flush();
+                    break;
                 default:
                     break;
             }
