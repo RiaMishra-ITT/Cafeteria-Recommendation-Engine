@@ -6,6 +6,7 @@ package repositories.Interfaces;
 
 import java.sql.SQLException;
 import java.util.List;
+import models.Notification;
 import models.UserNotifcation;
 
 /**
@@ -14,5 +15,6 @@ import models.UserNotifcation;
  */
 public interface IUserNotificationRepository {
     void addUserNotification(List<UserNotifcation> userNotifications) throws SQLException;
-    List<UserNotifcation> getRolledOutItemNotification() throws SQLException;
+    List<UserNotifcation> getRolledOutItemNotification(String date) throws SQLException;
+    public List<Notification> getUserNotifications(int userId) throws SQLException;
 }

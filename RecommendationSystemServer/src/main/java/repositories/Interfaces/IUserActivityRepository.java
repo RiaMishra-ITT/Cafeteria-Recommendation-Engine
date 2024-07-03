@@ -5,15 +5,12 @@
 package repositories.Interfaces;
 
 import java.sql.SQLException;
-import java.util.List;
-import models.Feedback;
+import models.UserActivities;
 
 /**
  *
  * @author ria.mishra
  */
-public interface IFeedbackRepository {
-    List<Feedback> getFeedbackByItemId(int menuItemId) throws SQLException;
-    int submitFeedback(Feedback feedback) throws SQLException;
-    List<Integer> getLowRatingMenuItemIds() throws SQLException;
+public interface IUserActivityRepository {
+    public void addUserActivity(UserActivities userActivity) throws SQLException;
 }
