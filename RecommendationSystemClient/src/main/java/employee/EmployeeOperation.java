@@ -7,38 +7,53 @@ package employee;
 import com.mycompany.recommendationsystemclient.Client;
 import java.util.Scanner;
 import services.EmployeeService;
-import services.MenuItemService;
+import services.Interfaces.IEmployeeService;
+import services.Interfaces.IUserActivityService;
+import services.Interfaces.IUserNotificationService;
+import services.UserActivityService;
+import services.UserNotifications;
 
 /**
  *
  * @author ria.mishra
  */
 public class EmployeeOperation {
-    private Client client;
+    private final Client client;
     public EmployeeOperation(Client client) {
         this.client = client;
     }
-    private Scanner scanner = new Scanner(System.in);
+    private final Scanner scanner = new Scanner(System.in);
     public void showMenu() {
         while(true) {
             System.out.println("----Operations---");
             System.out.println("1. View rolled out items");
             System.out.println("2. Submit feedback");
             System.out.println("3. View notifications");
-            System.out.println("4. Exit");
+            System.out.println("4. logout");
             int input = scanner.nextInt();
             this.handleUserInput(input);
         }
     }
     
     private void handleUserInput(int input) {
-        EmployeeService employeeService = new EmployeeService(client);
-        if(input == 1) {
-            employeeService.viewRolledOutItems();
-        } else if( input == 2) {
-            employeeService.submitFeedback();
-        } else if (input == 4) {
-            System.exit(1);
+        IEmployeeService employeeService = new EmployeeService(client);
+        IUserActivityService userActivityService = new UserActivityService(client);
+        IUserNotificationService userNotificationService = new UserNotifications(client);
+        switch (input) {
+            case 1:
+                employeeService.viewRolledOutItems();
+                break;
+            case 2:
+                employeeService.submitFeedback();
+                break; 
+            case 3:
+                userNotificationService.viewNotifications();
+                break; 
+            case 4:
+                userActivityService.addUserActivity();
+                System.exit(1);
+            default:
+                break;
         }
     }
 }

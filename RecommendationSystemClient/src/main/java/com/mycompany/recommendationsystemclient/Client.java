@@ -1,24 +1,10 @@
 package com.mycompany.recommendationsystemclient;
 
 
-import admin.AdminOperation;
-import authentication.Authentication;
-import java.io.BufferedReader;
-import java.io.Console;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
-
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 
 
 public class Client {
@@ -33,6 +19,7 @@ public class Client {
             socket = new Socket(HOST, PORT);
             output = new ObjectOutputStream(socket.getOutputStream());
             input = new ObjectInputStream(socket.getInputStream());
+            System.out.println("Server got connected");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -40,10 +27,8 @@ public class Client {
 
     public void sendRequest(String action, Object... params) {
         try {
-            System.out.println(action);
             output.writeUTF(action);
             if(params != null) {
-                System.out.println("reading");
                 for (Object param : params) {
                 output.writeObject(param);
                 }
