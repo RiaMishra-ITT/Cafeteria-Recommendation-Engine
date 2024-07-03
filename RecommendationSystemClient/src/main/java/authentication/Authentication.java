@@ -11,6 +11,9 @@ import employee.EmployeeOperation;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import models.User;
 
@@ -19,6 +22,9 @@ public class Authentication {
     private Scanner scanner = new Scanner(System.in);
     private Client client;
     public static int userId = 0;
+    public static String logintime = "";
+    public static String logouttime = "";
+    public static List<String> activities = new ArrayList<>();
 
     public Authentication(Client client) {
         this.client = client;
@@ -39,10 +45,13 @@ public class Authentication {
             if(!"Unable to login".equals(response)) {
                 role = response;
                 Authentication.userId = Integer.parseInt(user);
-                System.out.println(Authentication.userId);
+                LocalDateTime currentDateTime = LocalDateTime.now();
+                Authentication.logintime = currentDateTime.toString();
+                Authentication.activities.add("login");
                 break;
             }
         }
+        
         
         if(role.equals("Admin")) {
             AdminOperation adminOperation = new AdminOperation(client);
