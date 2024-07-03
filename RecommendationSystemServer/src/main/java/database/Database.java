@@ -12,10 +12,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import models.DiscardItem;
+import models.DiscardItemInfo;
 import models.Feedback;
 import models.MenuItem;
+import models.Notification;
 import models.Role;
 import models.User;
+import models.UserActivities;
 import models.UserNotifcation;
 
 
@@ -145,6 +149,19 @@ public class Database {
         return feedbacks;
     }
     
+    public List<Integer> getLowRatingMenuItemIds() throws SQLException {
+        String sql = "SELECT * FROM feedback WHERE LENGTH(Rating) <= 2";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        ResultSet rs = pstmt.executeQuery();
+        List<Integer> menuItemIds = new ArrayList<>();
+        while (rs.next()) {
+            menuItemIds.add(rs.getInt("MenuItemId"));
+        }
+
+        return menuItemIds;
+    }
+
+    
     public int submitFeedback(Feedback feedback) throws SQLException{
         String sql = "INSERT INTO feedback (Comment, Rating,Date,MenuItemId,UserId) VALUES (?, ?, ?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -174,6 +191,27 @@ public class Database {
         return results.length;
     }
     
+    public int addNotification(Notification notification) throws SQLException {
+        String sql = "insert into Notification(Message,NotificationTypeId,Datetime) values(?,?,?)";
+        PreparedStatement pstmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+        pstmt.setString(1,notification.message);
+        pstmt.setInt(2,1);
+        pstmt.setString(3,notification.dateTime);
+        
+        int rowInserted = pstmt.executeUpdate();
+        
+        int generatedId = -1;
+        try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+            if (generatedKeys.next()) {
+                generatedId = generatedKeys.getInt(1);
+            } else {
+                throw new SQLException("Failed to retrieve generated ID.");
+            }
+        }
+
+        return generatedId; 
+    }
+    
     public List<User> getUserByRole(int roleId) throws SQLException {
         String sql = "Select * from Users where roleId = ?";
         PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -187,17 +225,31 @@ public class Database {
         return users;
     }
     
-    public List<UserNotifcation> getRolledOutItemNotifications() throws SQLException {
-        String sql = "Select * from UserNotification where NotificationId = 8";
+    public List<UserNotifcation> getRolledOutItemNotifications(String date) throws SQLException {
+         String sql = "SELECT un.UserNotificationId, un.NotificationId, un.UserId, un.DateTime, un.MenuItemId " +
+                     "FROM UserNotification un " +
+                     "JOIN Notification n ON un.NotificationId = n.NotificationId " +
+                     "WHERE n.NotificationTypeId = 1 AND DATE(n.DateTime) = ?";
         PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1, date);
+
         ResultSet rs = pstmt.executeQuery();
         List<UserNotifcation> notifications = new ArrayList<>();
-        while(rs.next()) {
-            notifications.add(new UserNotifcation(rs.getInt("UserNotificationId"), rs.getInt("NotificationId"), rs.getInt("UserId"),rs.getString("DateTime"),rs.getInt("MenuItemId")));
-        }
         
+        while (rs.next()) {
+            int userNotificationId = rs.getInt("UserNotificationId");
+            int notificationId = rs.getInt("NotificationId");
+            int userId = rs.getInt("UserId");
+            String dateTime = rs.getString("DateTime");
+            int menuItemId = rs.getInt("MenuItemId");
+
+            UserNotifcation notification = new UserNotifcation(userNotificationId, notificationId, userId, dateTime, menuItemId);
+            notifications.add(notification);
+        }
+
         return notifications;
     }
+    
     
     public MenuItem getMenuItemById(int menuItemId) throws SQLException {
         String sql = "Select * from MenuItem where menuItemId = ?";
@@ -211,4 +263,90 @@ public class Database {
         }
         return menuItem;
     }
+    
+    public void addDiscardItem(List<Integer> menuItemIds) throws SQLException {
+        String checkSql = "SELECT COUNT(*) FROM discardItem WHERE MenuItemId = ?";
+        String insertSql = "INSERT INTO discardItem (MenuItemId) VALUES (?)";
+        PreparedStatement checkStmt = conn.prepareStatement(checkSql);
+        PreparedStatement insertStmt = conn.prepareStatement(insertSql);
+
+        for (int menuItemId : menuItemIds) {
+            checkStmt.setInt(1, menuItemId);
+            ResultSet rs = checkStmt.executeQuery();
+            if (rs.next() && rs.getInt(1) == 0) { // If the menuItemId does not exist
+                insertStmt.setInt(1, menuItemId);
+                insertStmt.addBatch();
+            }
+        }
+        insertStmt.executeBatch();
+    }
+    
+    public List<DiscardItemInfo> getDiscardedItemsWithRatings() throws SQLException {
+        String sql = "SELECT di.MenuItemId, mi.ItemName " +
+                     "FROM discardItem di " +
+                     "JOIN menuItem mi ON di.MenuItemId = mi.MenuItemId";
+
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        ResultSet rs = pstmt.executeQuery();
+        List<DiscardItemInfo> discardedItems = new ArrayList<>();
+        while (rs.next()) {
+            discardedItems.add(new DiscardItemInfo(
+                rs.getInt("MenuItemId"),
+                rs.getString("ItemName"),
+                "",
+                    ""
+            ));
+        }
+
+        return discardedItems;
+    }
+    
+    public void addUserActivities(UserActivities activity) throws SQLException {
+        String sql = "INSERT INTO useractivity (userId, activities, logintime, logouttime) VALUES (?, ?, ?, ?)";
+        
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, activity.userId);
+            pstmt.setString(2, activity.activities);
+            pstmt.setString(3, activity.logintime);
+            pstmt.setString(4, activity.logouttime);
+            
+            pstmt.executeUpdate();
+        }
+    }
+    
+    public List<Notification> getUserNotifications(int userId) throws SQLException {
+        String sql = "SELECT un.userId, n.datetime, n.notificationId, n.message " +
+                     "FROM UserNotification un " +
+                     "JOIN Notification n ON un.notificationId = n.notificationId " +
+                     "WHERE un.userId = ?";
+        
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setInt(1, userId);
+
+        ResultSet rs = pstmt.executeQuery();
+        List<Notification> notifications = new ArrayList<>();
+        while (rs.next()) {
+                int uid = rs.getInt("userId");
+                int nid = rs.getInt("notificationId");
+                String message = rs.getString("message");
+                String datetime = rs.getString("datetime");
+                notifications.add(new Notification(uid, message,nid,datetime));
+       }
+
+        return notifications;
+    }
+    
+    private void deleteDiscardItems(List<Integer> itemIds) throws SQLException {
+
+        String placeholders = String.join(",", new String[itemIds.size()]);
+        String sql = "DELETE FROM MenuItem WHERE menuItemId IN (" + placeholders + ")";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            for (int i = 0; i < itemIds.size(); i++) {
+                pstmt.setInt(i + 1, itemIds.get(i));
+            }
+            int rowsDeleted = pstmt.executeUpdate();
+            System.out.println(rowsDeleted + " items removed from the menu.");
+        }
+    }
+
 }
