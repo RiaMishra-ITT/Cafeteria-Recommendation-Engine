@@ -15,11 +15,11 @@ import models.MenuItem;
  * @author ria.mishra
  */
 public class ChefService {
-    private RecommendationEngineService recommendationService= new RecommendationEngineService();
+    private RecommendationEngineService recommendationEngineService= new RecommendationEngineService();
     
     public List<MenuItem> getFoodItemForNextDay(ObjectInputStream input)throws SQLException,IOException,ClassNotFoundException {
         int mealTypeId = Integer.parseInt(input.readObject().toString());
         int noOfItems = Integer.parseInt(input.readObject().toString());
-        return recommendationService.getFoodItemForNextDay(mealTypeId, noOfItems);
+        return recommendationEngineService.getFoodItemForNextDay(mealTypeId, noOfItems);
     }
 }

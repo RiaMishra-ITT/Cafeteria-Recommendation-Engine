@@ -7,12 +7,14 @@ package services;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import models.Feedback;
 import models.MenuItem;
+import models.Notification;
 import models.RolledOutItem;
 import models.User;
 import models.UserNotifcation;
@@ -23,6 +25,7 @@ import repositories.MenuItemRepository;
 import repositories.UserNotificationRepository;
 import repositories.UserRepository;
 import services.Interfaces.IFeedbackService;
+import services.Interfaces.INotificationService;
 import services.Interfaces.IUserNotificationService;
 
 /**
@@ -30,21 +33,24 @@ import services.Interfaces.IUserNotificationService;
  * @author ria.mishra
  */
 public class UserNotificationService implements IUserNotificationService{
-    private IUserNotificationRepository userNotificationRepository = new UserNotificationRepository();
-    private IUserRepository userRepository = new UserRepository();
-    private IFeedbackService feedbackService = new FeedbackService();
-    private IMenuItemRepository menuItemRepository = new MenuItemRepository();
+    private final IUserNotificationRepository userNotificationRepository = new UserNotificationRepository();
+    private final IUserRepository userRepository = new UserRepository();
+    private final IFeedbackService feedbackService = new FeedbackService();
+    private final IMenuItemRepository menuItemRepository = new MenuItemRepository();
+    private final INotificationService notificationService = new NotificationService();
     
     @Override
     public void addNotification(ObjectInputStream input) throws IOException, ClassNotFoundException, SQLException {
         String itemIds = input.readObject().toString();
         String[] itemIdArray = itemIds.split(",");
+        Notification notification = new Notification(0,"Menu rolled out",1,LocalDateTime.now().toString());
+        int notificationId = notificationService.addNotification(notification);
         List<User> users = userRepository.getUserByRoleId(3);
         List<UserNotifcation> userNotifications = new ArrayList<>();
-        for(int i =0 ;i < itemIdArray.length; i++) {
-            for(int j =0; j < users.size(); j ++) {
+        for (String itemIdArray1 : itemIdArray) {
+            for (int j = 0; j < users.size(); j ++) {
                 LocalDateTime currentTime = LocalDateTime.now();
-                UserNotifcation userNotification = new UserNotifcation(0,8,users.get(j).userId,currentTime.toString(),Integer.parseInt(itemIdArray[i]));
+                UserNotifcation userNotification = new UserNotifcation(0, notificationId, users.get(j).userId, currentTime.toString(), Integer.parseInt(itemIdArray1));
                 userNotifications.add(userNotification);
             }   
         }
@@ -54,7 +60,9 @@ public class UserNotificationService implements IUserNotificationService{
     
     @Override
     public List<RolledOutItem> getRolledOutItemNotifications() throws IOException, ClassNotFoundException, SQLException{
-        List<UserNotifcation> userNotifications =  userNotificationRepository.getRolledOutItemNotification();
+        LocalDate today = LocalDate.now();
+        String formattedDate = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        List<UserNotifcation> userNotifications =  userNotificationRepository.getRolledOutItemNotification(formattedDate);
         System.out.println(userNotifications.size());
         List<RolledOutItem> rolledOutItems = new ArrayList<>();
         for(UserNotifcation notification : userNotifications) {
@@ -75,7 +83,14 @@ public class UserNotificationService implements IUserNotificationService{
             rolledOutItems.add(rolledOutItem);
         }
         
-        System.out.println(rolledOutItems.size());
+
         return rolledOutItems;
+    }
+
+    @Override
+    public List<Notification> getUserNotifications(ObjectInputStream input) throws SQLException,IOException,ClassNotFoundException {
+        int userId;
+        userId = Integer.parseInt(input.readObject().toString());
+        return userNotificationRepository.getUserNotifications(userId);
     }
 }
