@@ -16,20 +16,21 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import models.Feedback;
-import models.MenuItem;
 import models.RolledOutItem;
+import services.Interfaces.IEmployeeService;
 
 /**
  *
  * @author ria.mishra
  */
-public class EmployeeService {
+public class EmployeeService implements IEmployeeService {
     Scanner scanner = new Scanner(System.in);
     Client client;
     public EmployeeService(Client client) {
         this.client = client;
     }
     
+    @Override
     public void submitFeedback() {
         MenuItemService menuItemService = new MenuItemService(client);
         menuItemService.viewAllItems();
@@ -47,8 +48,10 @@ public class EmployeeService {
         client.sendRequest("submitFeedback", feedback);
         String response = (String) client.receiveResponse();
         System.out.println("Server Response: " + response);
+        Authentication.activities.add("Feedback submitted");
     }
     
+    @Override
     public void viewRolledOutItems() {
         client.sendRequest("viewRolledOutItem", null);
         List<RolledOutItem> items;
@@ -67,7 +70,7 @@ public class EmployeeService {
                 System.out.printf("%-15s \t %-15s \t %-10.2f \t %-12s \t %-10s \t %-10s \t %-10s%n", item.menuItemId,item.itemName, item.price, item.availbilityStatus, mealType,item.rating,item.sentiment);
 
             }
-
+            Authentication.activities.add("View rolled out items");
         } catch (IOException ex) {
             Logger.getLogger(MenuItemService.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {

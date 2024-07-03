@@ -4,6 +4,7 @@
  */
 package services;
 
+import authentication.Authentication;
 import com.mycompany.recommendationsystemclient.Client;
 import java.io.IOException;
 import java.util.List;
@@ -11,15 +12,17 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import models.MenuItem;
+import services.Interfaces.IMenuItemService;
 
 
-public  class MenuItemService {
+public  class MenuItemService implements IMenuItemService{
     Scanner scanner = new Scanner(System.in);
     Client client;
     public MenuItemService(Client client) {
         this.client = client;
     }
     
+    @Override
     public void addMenuItem() {
         System.out.println("Add Item name");
         String itemName = scanner.nextLine();
@@ -39,8 +42,10 @@ public  class MenuItemService {
         client.sendRequest("addMenuItem", menuItem);
         String response = (String) client.receiveResponse();
         System.out.println("Server Response: " + response);
+        Authentication.activities.add("Menu item added");
     }
     
+    @Override
     public void viewAllItems(){
         client.sendRequest("viewAllItems", null);
         List<MenuItem> menuItems;
@@ -52,7 +57,7 @@ public  class MenuItemService {
                 System.out.printf("%-15s \t %-15s \t %-10.2f \t %-12s \t %-10s%n", menuItem.menuItemId,menuItem.itemName, menuItem.price, menuItem.availbilityStatus, mealType);
 
             }
-
+            Authentication.activities.add("View all items");
         } catch (IOException ex) {
             Logger.getLogger(MenuItemService.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
@@ -61,10 +66,11 @@ public  class MenuItemService {
         
     }
     
+    @Override
     public void updateItem() {
         List<MenuItem> menuItems;
         try {
-            client.sendRequest("viewAllItems", "");
+            client.sendRequest("viewAllItems", null);
             menuItems = (List<MenuItem>) client.receiveObjectResponse().readObject();
             System.out.println("Id \t Item Name \t Item Price \t Item Status \t Meal Type");
             for(MenuItem menuItem : menuItems) {
@@ -99,6 +105,7 @@ public  class MenuItemService {
             client.sendRequest("updateMenuItem", menuItem);
             String response = (String) client.receiveResponse();
             System.out.println("Server Response: " + response);
+            Authentication.activities.add("updated menu item");
         } catch (IOException ex) {
             Logger.getLogger(MenuItemService.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
@@ -107,6 +114,7 @@ public  class MenuItemService {
         
     }
     
+    @Override
     public MenuItem getItemById(List<MenuItem> items, int id) {
         for (MenuItem item : items) {
             if (item.menuItemId == id) {
@@ -116,10 +124,11 @@ public  class MenuItemService {
         return null;
     }
     
+    @Override
     public void deleteMenuItem() {
         List<MenuItem> menuItems;
         try {
-            client.sendRequest("viewAllItems", "");
+            client.sendRequest("viewAllItems", null);
             menuItems = (List<MenuItem>) client.receiveObjectResponse().readObject();
             System.out.println("Id \t Item Name \t Item Price \t Item Status \t Meal Type");
             for(MenuItem menuItem : menuItems) {
@@ -134,6 +143,7 @@ public  class MenuItemService {
             client.sendRequest("deleteMenuItem", menuItem);
             String response = (String) client.receiveResponse();
             System.out.println("Server Response: " + response);
+            Authentication.activities.add("Deleted menu item");
         } catch (IOException ex) {
             Logger.getLogger(MenuItemService.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
