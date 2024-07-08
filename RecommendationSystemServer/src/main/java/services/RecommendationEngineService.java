@@ -4,6 +4,7 @@
  */
 package services;
 
+import customexception.UnableToConnectDatabase;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +16,13 @@ import services.Interfaces.IMenuItemService;
  * @author ria.mishra
  */
 public class RecommendationEngineService {
-    private final FeedbackService feedbackService = new FeedbackService();
-    private final IMenuItemService menuItemService = new MenuItemService();
+    private final FeedbackService feedbackService;
+    private final IMenuItemService menuItemService;
+
+    public RecommendationEngineService() throws UnableToConnectDatabase {
+        this.menuItemService = new MenuItemService();
+        this.feedbackService = new FeedbackService();
+    }
     public List<MenuItem> getFoodItemForNextDay(int mealTypeId, int noOfItems) throws SQLException{
         List<MenuItem> menuItems = menuItemService.getItemsByMealType(mealTypeId);
         List<MenuItem> positiveItems = new ArrayList<>();

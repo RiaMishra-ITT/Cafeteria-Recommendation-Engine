@@ -4,10 +4,10 @@
  */
 package services;
 
+import customexception.UnableToConnectDatabase;
+import database.NotificationDatabaseOperation;
 import java.sql.SQLException;
 import models.Notification;
-import repositories.Interfaces.INotificationRepository;
-import repositories.NotificationRepository;
 import services.Interfaces.INotificationService;
 
 /**
@@ -15,10 +15,14 @@ import services.Interfaces.INotificationService;
  * @author ria.mishra
  */
 public class NotificationService implements INotificationService {
-    private final INotificationRepository notificationRepository = new NotificationRepository();
+    private final NotificationDatabaseOperation dbOperation;
+
+    public NotificationService() throws UnableToConnectDatabase {
+        this.dbOperation = new NotificationDatabaseOperation();
+    }
     @Override
     public int addNotification(Notification notification) throws SQLException{
-        return notificationRepository.addNotification(notification);
+        return dbOperation.addNotification(notification);
     }
     
 }

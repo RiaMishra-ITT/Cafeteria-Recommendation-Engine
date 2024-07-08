@@ -4,6 +4,8 @@
  */
 package services;
 
+import customexception.UnableToConnectDatabase;
+import database.DiscardItemDatabaseOperation;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -11,25 +13,26 @@ import java.util.List;
 import java.util.Set;
 import models.DiscardItemInfo;
 import models.Feedback;
-import repositories.DiscardItemRepository;
-import repositories.Interfaces.IDiscardItemRepository;
 import services.Interfaces.IDiscardItemService;
-import services.Interfaces.IFeedbackService;
 
 
 public class DiscardItemService implements IDiscardItemService {
-    private IDiscardItemRepository discardItemRepository = new DiscardItemRepository();
-    private IFeedbackService feedbackService = new FeedbackService();
-    private SemanticAnalysisService semanticAnalysisService = new SemanticAnalysisService();
+    private final DiscardItemDatabaseOperation discardItemDbOperation;
+    private final FeedbackService feedbackService = new FeedbackService();
+    private final SemanticAnalysisService semanticAnalysisService = new SemanticAnalysisService();
+
+    public DiscardItemService() throws UnableToConnectDatabase {
+        this.discardItemDbOperation = new DiscardItemDatabaseOperation();
+    }
     
     @Override
     public void addDiscardItem(List<Integer> menuItemIds) throws IOException, ClassNotFoundException, SQLException {
-        discardItemRepository.addDiscardItems(menuItemIds);
+        discardItemDbOperation.addDiscardItems(menuItemIds);
     }
 
     @Override
     public List<DiscardItemInfo> getDiscardedItemsWithRatings() throws SQLException {
-        List<DiscardItemInfo> discardItems = discardItemRepository.getDiscardedItemsWithRatings();
+        List<DiscardItemInfo> discardItems = discardItemDbOperation.getDiscardedItemsWithRatings();
         for(int i=0;i<discardItems.size();i++) {
             Set<String> specificSentiments = new HashSet<>();
             List<Feedback> feedbacks = feedbackService.getFeedbackByItemId(discardItems.get(i).menuItemId);

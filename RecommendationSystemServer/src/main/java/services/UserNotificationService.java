@@ -4,6 +4,11 @@
  */
 package services;
 
+import customexception.FailedToAddNotification;
+import customexception.UnableToConnectDatabase;
+import database.MenuItemDatabaseOperation;
+import database.NotificationDatabaseOperation;
+import database.UserDatabaseOperation;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.sql.SQLException;
@@ -18,12 +23,6 @@ import models.Notification;
 import models.RolledOutItem;
 import models.User;
 import models.UserNotifcation;
-import repositories.Interfaces.IMenuItemRepository;
-import repositories.Interfaces.IUserNotificationRepository;
-import repositories.Interfaces.IUserRepository;
-import repositories.MenuItemRepository;
-import repositories.UserNotificationRepository;
-import repositories.UserRepository;
 import services.Interfaces.IFeedbackService;
 import services.Interfaces.INotificationService;
 import services.Interfaces.IUserNotificationService;
@@ -33,41 +32,51 @@ import services.Interfaces.IUserNotificationService;
  * @author ria.mishra
  */
 public class UserNotificationService implements IUserNotificationService{
-    private final IUserNotificationRepository userNotificationRepository = new UserNotificationRepository();
-    private final IUserRepository userRepository = new UserRepository();
+    private final NotificationDatabaseOperation notificationDbOperation;
+    private final UserDatabaseOperation userDboperation;
     private final IFeedbackService feedbackService = new FeedbackService();
-    private final IMenuItemRepository menuItemRepository = new MenuItemRepository();
+    private final MenuItemDatabaseOperation menuItemDbOperation;
     private final INotificationService notificationService = new NotificationService();
+
+    public UserNotificationService() throws UnableToConnectDatabase {
+        this.userDboperation = new UserDatabaseOperation();
+        this.menuItemDbOperation = new MenuItemDatabaseOperation();
+        this.notificationDbOperation = new NotificationDatabaseOperation();
+    }
     
     @Override
-    public void addNotification(ObjectInputStream input) throws IOException, ClassNotFoundException, SQLException {
-        String itemIds = input.readObject().toString();
-        String[] itemIdArray = itemIds.split(",");
-        Notification notification = new Notification(0,"Menu rolled out",1,LocalDateTime.now().toString());
-        int notificationId = notificationService.addNotification(notification);
-        List<User> users = userRepository.getUserByRoleId(3);
-        List<UserNotifcation> userNotifications = new ArrayList<>();
-        for (String itemIdArray1 : itemIdArray) {
-            for (int j = 0; j < users.size(); j ++) {
-                LocalDateTime currentTime = LocalDateTime.now();
-                UserNotifcation userNotification = new UserNotifcation(0, notificationId, users.get(j).userId, currentTime.toString(), Integer.parseInt(itemIdArray1));
-                userNotifications.add(userNotification);
-            }   
+    public void addNotification(ObjectInputStream input) throws IOException, ClassNotFoundException, SQLException,FailedToAddNotification {
+        try {
+            String itemIds = input.readObject().toString();
+            String[] itemIdArray = itemIds.split(",");
+            Notification notification = new Notification(0,"Menu rolled out",1,LocalDateTime.now().toString());
+            int notificationId = notificationService.addNotification(notification);
+            List<User> users = userDboperation.getUserByRoleId(3);
+            List<UserNotifcation> userNotifications = new ArrayList<>();
+            for (String itemIdArray1 : itemIdArray) {
+                for (int j = 0; j < users.size(); j ++) {
+                    LocalDateTime currentTime = LocalDateTime.now();
+                    UserNotifcation userNotification = new UserNotifcation(0, notificationId, users.get(j).userId, currentTime.toString(), Integer.parseInt(itemIdArray1));
+                    userNotifications.add(userNotification);
+                }   
+            }
+            System.out.println(userNotifications.size());
+            notificationDbOperation.addUserNotification(userNotifications);
+        } catch (Exception ex) {
+            throw new FailedToAddNotification("Failed to add notification");
         }
-        System.out.println(userNotifications.size());
-        userNotificationRepository.addUserNotification(userNotifications);
     }
     
     @Override
     public List<RolledOutItem> getRolledOutItemNotifications() throws IOException, ClassNotFoundException, SQLException{
         LocalDate today = LocalDate.now();
         String formattedDate = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        List<UserNotifcation> userNotifications =  userNotificationRepository.getRolledOutItemNotification(formattedDate);
+        List<UserNotifcation> userNotifications =  notificationDbOperation.getRolledOutItemNotifications(formattedDate);
         System.out.println(userNotifications.size());
         List<RolledOutItem> rolledOutItems = new ArrayList<>();
         for(UserNotifcation notification : userNotifications) {
             String sentiment = feedbackService.calculateSentiment(notification.menuItemId);
-            MenuItem menuItem = menuItemRepository.getMenuItemById(notification.menuItemId);
+            MenuItem menuItem = menuItemDbOperation.getMenuItemById(notification.menuItemId);
             List<Feedback> feedbacks = feedbackService.getFeedbackByItemId(notification.menuItemId);
             String totalRating = "";
             for(Feedback feedback : feedbacks) {
@@ -91,6 +100,6 @@ public class UserNotificationService implements IUserNotificationService{
     public List<Notification> getUserNotifications(ObjectInputStream input) throws SQLException,IOException,ClassNotFoundException {
         int userId;
         userId = Integer.parseInt(input.readObject().toString());
-        return userNotificationRepository.getUserNotifications(userId);
+        return notificationDbOperation.getUserNotifications(userId);
     }
 }
