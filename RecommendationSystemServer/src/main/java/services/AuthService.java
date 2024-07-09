@@ -6,7 +6,7 @@ package services;
 
 import customexception.UnableToConnectDatabase;
 import customexception.UserNotFoundException;
-import database.UserDatabaseOperation;
+import Repositories.UserDatabaseRepository;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import models.User;
@@ -14,11 +14,11 @@ import services.Interfaces.IAuthService;
 
 
 public class AuthService implements IAuthService {
-    private final UserDatabaseOperation dbOperation;
+    private final UserDatabaseRepository dbOperation;
     public String username = "";
 
     public AuthService() throws UnableToConnectDatabase {
-        this.dbOperation = new UserDatabaseOperation();
+        this.dbOperation = new UserDatabaseRepository();
     }
     
     @Override

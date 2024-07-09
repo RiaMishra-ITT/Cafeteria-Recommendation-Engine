@@ -5,7 +5,7 @@
 package services;
 
 import customexception.UnableToConnectDatabase;
-import database.DiscardItemDatabaseOperation;
+import Repositories.DiscardItemRepository;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -17,12 +17,12 @@ import services.Interfaces.IDiscardItemService;
 
 
 public class DiscardItemService implements IDiscardItemService {
-    private final DiscardItemDatabaseOperation discardItemDbOperation;
+    private final DiscardItemRepository discardItemDbOperation;
     private final FeedbackService feedbackService = new FeedbackService();
     private final SemanticAnalysisService semanticAnalysisService = new SemanticAnalysisService();
 
     public DiscardItemService() throws UnableToConnectDatabase {
-        this.discardItemDbOperation = new DiscardItemDatabaseOperation();
+        this.discardItemDbOperation = new DiscardItemRepository();
     }
     
     @Override

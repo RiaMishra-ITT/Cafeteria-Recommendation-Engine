@@ -5,7 +5,7 @@
 package services;
 
 import customexception.UnableToConnectDatabase;
-import database.UserDatabaseOperation;
+import Repositories.UserDatabaseRepository;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.sql.SQLException;
@@ -17,10 +17,10 @@ import services.Interfaces.IUserActivityService;
  * @author ria.mishra
  */
 public class UserActivityService implements IUserActivityService{
-    private final UserDatabaseOperation dbOperation;
+    private final UserDatabaseRepository dbOperation;
 
     public UserActivityService() throws UnableToConnectDatabase {
-        this.dbOperation = new UserDatabaseOperation();
+        this.dbOperation = new UserDatabaseRepository();
     }
     @Override
     public void addUserActivity(ObjectInputStream input) throws IOException, ClassNotFoundException, SQLException {
