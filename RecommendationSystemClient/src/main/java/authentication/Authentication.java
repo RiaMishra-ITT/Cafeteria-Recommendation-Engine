@@ -8,14 +8,10 @@ import admin.AdminOperation;
 import chef.ChefOperation;
 import com.mycompany.recommendationsystemclient.Client;
 import employee.EmployeeOperation;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import models.User;
 
 
 public class Authentication {

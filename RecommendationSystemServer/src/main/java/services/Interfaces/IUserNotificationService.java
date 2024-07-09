@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Set;
 import models.Notification;
 import models.RolledOutItem;
 
@@ -20,4 +21,5 @@ public interface IUserNotificationService {
     void addNotification(ObjectInputStream input) throws IOException, ClassNotFoundException, SQLException,FailedToAddNotification;
     List<RolledOutItem> getRolledOutItemNotifications() throws IOException, ClassNotFoundException, SQLException;
     List<Notification> getUserNotifications(ObjectInputStream input) throws SQLException,IOException,ClassNotFoundException;
+    public void sendDetailFeedbackNotification(Set<Integer> menuItemId) throws IOException, ClassNotFoundException, SQLException,FailedToAddNotification;
 }

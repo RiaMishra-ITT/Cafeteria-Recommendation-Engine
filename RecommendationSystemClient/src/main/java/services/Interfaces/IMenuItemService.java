@@ -16,5 +16,6 @@ public interface IMenuItemService {
     public void viewAllItems();
     public MenuItem getItemById(List<MenuItem> items, int id);
     public void deleteMenuItem();
+    public void deleteMultipleItems(List<Integer> ids);
     public void updateItem();
 }

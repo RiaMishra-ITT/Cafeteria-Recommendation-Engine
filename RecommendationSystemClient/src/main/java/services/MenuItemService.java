@@ -151,4 +151,12 @@ public  class MenuItemService implements IMenuItemService{
         }
         
     }
+
+    @Override
+    public void deleteMultipleItems(List<Integer> ids) {
+        client.sendRequest("deleteMenuItems", ids);
+        String response = (String) client.receiveResponse();
+        System.out.println("Server Response: " + response);
+        Authentication.activities.add("Removed discard items");
+    }
 }

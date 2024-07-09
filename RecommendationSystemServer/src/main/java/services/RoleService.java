@@ -6,7 +6,7 @@ package services;
 
 import customexception.RoleNotFoundException;
 import customexception.UnableToConnectDatabase;
-import database.RoleDatabaseOperation;
+import Repositories.RoleDatabaseRepository;
 import java.sql.SQLException;
 import models.Role;
 import services.Interfaces.IRoleService;
@@ -16,10 +16,10 @@ import services.Interfaces.IRoleService;
  * @author ria.mishra
  */
 public class RoleService implements IRoleService {
-    private final RoleDatabaseOperation dbOperation;
+    private final RoleDatabaseRepository dbOperation;
 
     public RoleService() throws UnableToConnectDatabase {
-        this.dbOperation = new RoleDatabaseOperation();
+        this.dbOperation = new RoleDatabaseRepository();
     }
     
     @Override

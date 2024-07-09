@@ -7,9 +7,7 @@ package services;
 import customexception.FailedToAddItemException;
 import customexception.FailedToUpdateItemException;
 import customexception.UnableToConnectDatabase;
-import database.DiscardItemDatabaseOperation;
-import database.FeedbackDatabaseOperation;
-import database.MenuItemDatabaseOperation;
+import Repositories.MenuItemRepository;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.sql.SQLException;
@@ -19,10 +17,10 @@ import services.Interfaces.IMenuItemService;
 
 
 public class MenuItemService implements IMenuItemService{
-    private final MenuItemDatabaseOperation dbOperation;
+    private final MenuItemRepository dbOperation;
     
     public MenuItemService() throws UnableToConnectDatabase {
-        this.dbOperation = new MenuItemDatabaseOperation();
+        this.dbOperation = new MenuItemRepository();
     }
     
     @Override
@@ -57,5 +55,11 @@ public class MenuItemService implements IMenuItemService{
     @Override
     public List<MenuItem> getItemsByMealType(int mealTypeId) throws SQLException {
         return dbOperation.getItemsByMealType(mealTypeId);
+    }
+
+    @Override
+    public void removeMenuItems(ObjectInputStream input) throws SQLException, FailedToUpdateItemException, IOException, ClassNotFoundException {
+        List<Integer> ids = (List<Integer>) input.readObject();
+        dbOperation.deleteMenuItems(ids);
     }
 }

@@ -5,8 +5,8 @@
 package services;
 
 import customexception.UnableToConnectDatabase;
-import database.DiscardItemDatabaseOperation;
-import database.FeedbackDatabaseOperation;
+import Repositories.DiscardItemRepository;
+import Repositories.FeedbackDatabaseRepository;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.sql.SQLException;
@@ -17,12 +17,12 @@ import services.Interfaces.IFeedbackService;
 
 public class FeedbackService implements IFeedbackService{
     private final SemanticAnalysisService semanticAnalysisService = new SemanticAnalysisService();
-    private final FeedbackDatabaseOperation feedbackDbOperation;
-    private final DiscardItemDatabaseOperation discardItemDbOperation;
+    private final FeedbackDatabaseRepository feedbackDbOperation;
+    private final DiscardItemRepository discardItemDbOperation;
 
     public FeedbackService() throws UnableToConnectDatabase {
-        this.discardItemDbOperation = new DiscardItemDatabaseOperation();
-        this.feedbackDbOperation = new FeedbackDatabaseOperation();
+        this.discardItemDbOperation = new DiscardItemRepository();
+        this.feedbackDbOperation = new FeedbackDatabaseRepository();
     }
     
     @Override

@@ -15,9 +15,11 @@ import models.MenuItem;
 import models.Notification;
 import models.RolledOutItem;
 import models.User;
+import services.AdminQuestionsService;
 import services.ChefService;
 import services.DiscardItemService;
 import services.FeedbackService;
+import services.Interfaces.IAdminQuestionsService;
 import services.Interfaces.IAuthService;
 import services.Interfaces.IDiscardItemService;
 import services.Interfaces.IFeedbackService;
@@ -40,6 +42,7 @@ public class ServerOperations {
             IUserNotificationService userNotificationService = new UserNotificationService();
             IDiscardItemService discardItemService = new DiscardItemService();
             IUserActivityService activityService = new UserActivityService();
+            IAdminQuestionsService questionsService = new AdminQuestionsService();
             String action = input.readUTF();
             System.out.println(action);
             switch (action) {
@@ -106,6 +109,16 @@ public class ServerOperations {
                 case "usernotification":
                     List<Notification> notifications =  userNotificationService.getUserNotifications(input);
                     output.writeObject(notifications);
+                    output.flush();
+                    break;
+                case "deleteMenuItems":
+                    menuItemService.removeMenuItems(input);
+                    output.writeUTF("Items removed succesfully");
+                    output.flush();
+                    break;
+                case "submitquestions":
+                    questionsService.addQuestions(input);
+                    output.writeUTF("Question added succesfully");
                     output.flush();
                     break;
                 default:
