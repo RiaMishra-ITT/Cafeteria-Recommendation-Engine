@@ -14,5 +14,5 @@ import models.User;
  * @author ria.mishra
  */
 public interface IAuthService {
-    public User Login(ObjectInputStream input) throws IOException, ClassNotFoundException, UserNotFoundException;
+    public User login(ObjectInputStream input) throws IOException, ClassNotFoundException, UserNotFoundException;
 }

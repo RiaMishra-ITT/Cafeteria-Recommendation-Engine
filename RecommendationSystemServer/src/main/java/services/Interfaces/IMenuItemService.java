@@ -21,6 +21,5 @@ public interface IMenuItemService {
     public void removeMenuItem(ObjectInputStream input) throws SQLException, FailedToUpdateItemException, IOException, ClassNotFoundException ;
     public List<MenuItem> getAllMenuItem() throws SQLException;
     public void updateMenuItem(ObjectInputStream input) throws SQLException, FailedToUpdateItemException,IOException,ClassNotFoundException;
-    public MenuItem getMenuItemById(MenuItem menuItem) throws SQLException;
     List<MenuItem> getItemsByMealType(int mealTypeId) throws SQLException;
 }

@@ -49,7 +49,7 @@ public class DiscardItemService implements IDiscardItemService{
                 System.out.println("Enter food items name which you want to remove by comma seperated");
                 String names = scanner.nextLine();
                 List<Integer> itemIds = getItemIdsByNames(items,names);
-                menuItemService.deleteMultipleItems(itemIds);
+                //menuItemService.deleteMultipleItems(itemIds);
             }
         } catch (IOException ex) {
             Logger.getLogger(MenuItemService.class.getName()).log(Level.SEVERE, null, ex);

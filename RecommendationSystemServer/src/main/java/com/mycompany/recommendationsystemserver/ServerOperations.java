@@ -25,27 +25,27 @@ import services.Interfaces.IMenuItemService;
 import services.Interfaces.IRoleService;
 import services.Interfaces.IUserActivityService;
 import services.Interfaces.IUserNotificationService;
-import services.RecommendationEngineService;
 import services.RoleService;
 import services.UserActivityService;
 import services.UserNotificationService;
 
 public class ServerOperations {
     public static void handleOperations(ObjectInputStream input, ObjectOutputStream output) throws IOException, ClassNotFoundException {
-        IMenuItemService menuItemService = new MenuItemService();
-        IFeedbackService feedbackService = new FeedbackService();
-        ChefService chefService = new ChefService();
-        IUserNotificationService userNotificationService = new UserNotificationService();
-        IDiscardItemService discardItemService = new DiscardItemService();
-        IUserActivityService activityService = new UserActivityService();
+        
         try
         {
+            IMenuItemService menuItemService = new MenuItemService();
+            IFeedbackService feedbackService = new FeedbackService();
+            ChefService chefService = new ChefService();
+            IUserNotificationService userNotificationService = new UserNotificationService();
+            IDiscardItemService discardItemService = new DiscardItemService();
+            IUserActivityService activityService = new UserActivityService();
             String action = input.readUTF();
             System.out.println(action);
             switch (action) {
                 case "login":
                     IAuthService authService = new AuthService();
-                    User user = authService.Login(input);
+                    User user = authService.login(input);
                     IRoleService roleService = new RoleService();
                     String role = roleService.getRoleById(user.roleId);
                     output.writeUTF(role);

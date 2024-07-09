@@ -4,7 +4,6 @@
  */
 package com.mycompany.recommendationsystemserver;
 
-import database.Database;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;

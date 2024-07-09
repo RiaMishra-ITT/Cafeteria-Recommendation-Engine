@@ -4,6 +4,7 @@
  */
 package services.Interfaces;
 
+import customexception.FailedToAddNotification;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.sql.SQLException;
@@ -16,7 +17,7 @@ import models.RolledOutItem;
  * @author ria.mishra
  */
 public interface IUserNotificationService {
-    void addNotification(ObjectInputStream input) throws IOException, ClassNotFoundException, SQLException;
+    void addNotification(ObjectInputStream input) throws IOException, ClassNotFoundException, SQLException,FailedToAddNotification;
     List<RolledOutItem> getRolledOutItemNotifications() throws IOException, ClassNotFoundException, SQLException;
     List<Notification> getUserNotifications(ObjectInputStream input) throws SQLException,IOException,ClassNotFoundException;
 }
