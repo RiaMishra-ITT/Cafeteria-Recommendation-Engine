@@ -27,12 +27,16 @@ public class UserActivityService implements IUserActivityService{
     
     @Override
     public void addUserActivity() {
-        Authentication.activities.add("Logout");
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        UserActivities activity = new UserActivities(0,Authentication.userId, String.join(", ", Authentication.activities),Authentication.logintime,currentDateTime.toString());
-        client.sendRequest("recordActivity", activity);
-        String response = (String) client.receiveResponse();
-        System.out.println("Server Response: " + response);
+        try {
+            Authentication.activities.add("Logout");
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            UserActivities activity = new UserActivities(0,Authentication.userId, String.join(", ", Authentication.activities),Authentication.logintime,currentDateTime.toString());
+            client.sendRequest("recordActivity", activity);
+            String response = (String) client.receiveStringResponse();
+            System.out.println("Server Response: " + response);
+        } catch (Exception ex) {
+            System.out.println("Client Response: Failed to add user activity");
+        }
     }
     
 }
