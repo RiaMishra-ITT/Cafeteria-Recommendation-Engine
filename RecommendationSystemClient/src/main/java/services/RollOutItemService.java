@@ -36,8 +36,9 @@ public class RollOutItemService implements IRollOutItemService{
         System.out.println("How many items you want to roll out?");
         int noOfItems = scanner.nextInt();
         scanner.nextLine();
-        client.sendRequest("rollOutItem", mealType,noOfItems);
+        
         try {
+            client.sendRequest("rollOutItem", mealType,noOfItems);
             List<MenuItem> menuItems = (List<MenuItem>) client.receiveObjectResponse().readObject();
             int mealTypeId = "1".equals(mealType) ? 1 : ("2".equals(mealType) ? 2 : 3);
             if(mealTypeId == 1) {
@@ -59,13 +60,13 @@ public class RollOutItemService implements IRollOutItemService{
             System.out.println("Enter items id you want to select by comma seperated");
             String input = scanner.nextLine();
             client.sendRequest("addUserNotification", input);
-            String response = (String) client.receiveResponse();
+            String response = (String) client.receiveStringResponse();
             System.out.println("Server Response: " + response);
             Authentication.activities.add("Roll out item");
         } catch (IOException ex) {
-            Logger.getLogger(MenuItemService.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Client response - Failed to convert server response");
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(MenuItemService.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Client response - Failed to roll out item");
         }
     }
 }
