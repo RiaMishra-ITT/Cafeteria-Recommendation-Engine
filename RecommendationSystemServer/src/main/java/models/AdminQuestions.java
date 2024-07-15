@@ -15,4 +15,9 @@ public class AdminQuestions implements Serializable{
     public String question;
     public int menuItemId;
     
+    public AdminQuestions(int questionId, String question, int menuItemId) {
+        this.questionId = questionId;
+        this.question = question;
+        this.menuItemId = menuItemId;
+    }
 }
