@@ -15,8 +15,8 @@ import java.util.Scanner;
 
 
 public class Authentication {
-    private Scanner scanner = new Scanner(System.in);
-    private Client client;
+    private final Scanner scanner = new Scanner(System.in);
+    private final Client client;
     public static int userId = 0;
     public static String logintime = "";
     public static String logouttime = "";
@@ -35,9 +35,9 @@ public class Authentication {
             String name = scanner.nextLine();
             
             client.sendRequest("login", userId, name);
-            String response = (String) client.receiveResponse();
+            String response = (String) client.receiveStringResponse();
             System.out.println("Server Response: " + response);
-            String user = (String) client.receiveResponse();
+            String user = (String) client.receiveStringResponse();
             if(!"Unable to login".equals(response)) {
                 role = response;
                 Authentication.userId = Integer.parseInt(user);

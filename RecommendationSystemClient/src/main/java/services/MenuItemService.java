@@ -16,7 +16,7 @@ import services.Interfaces.IMenuItemService;
 
 
 public  class MenuItemService implements IMenuItemService{
-    Scanner scanner = new Scanner(System.in);
+    public Scanner scanner = new Scanner(System.in);
     Client client;
     public MenuItemService(Client client) {
         this.client = client;
@@ -24,32 +24,42 @@ public  class MenuItemService implements IMenuItemService{
     
     @Override
     public void addMenuItem() {
-        System.out.println("Add Item name");
-        String itemName = scanner.nextLine();
-        System.out.println("Add Item price");
-        int price = scanner.nextInt();
-        System.out.println("Add Meal type");
-        System.out.println("Available meal types");
-        System.out.println("1. Breakfast");
-        System.out.println("2. Lunch");
-        System.out.println("3. Dinner");
-        System.out.println("Enter meal type id");
-        int mealTypeId = scanner.nextInt();
-        System.out.println("Add Item availbility");
-        scanner.nextLine();
-        String availbilityStatus = scanner.nextLine();
-        MenuItem menuItem = new MenuItem(0,itemName,price,availbilityStatus,mealTypeId);
-        client.sendRequest("addMenuItem", menuItem);
-        String response = (String) client.receiveResponse();
-        System.out.println("Server Response: " + response);
-        Authentication.activities.add("Menu item added");
+        try {
+            System.out.println("Add Item name");
+            String itemName = scanner.nextLine();
+            System.out.println("Add Item price");
+            int price = scanner.nextInt();
+            System.out.println("Add Meal type");
+            System.out.println("Available meal types");
+            System.out.println("1. Breakfast");
+            System.out.println("2. Lunch");
+            System.out.println("3. Dinner");
+            System.out.println("Enter meal type id");
+            int mealTypeId = scanner.nextInt();
+            System.out.println("Add Item availbility");
+            scanner.nextLine();
+            String availbilityStatus = scanner.nextLine();
+            System.out.println("Enter item type");
+            String itemType = scanner.nextLine();
+            System.out.println("Enter spice level");
+            String spiceLevel = scanner.nextLine();
+            System.out.println("Enter cuisine type");
+            String cuisineType = scanner.nextLine();
+            MenuItem menuItem = new MenuItem(0,itemName,price,availbilityStatus,mealTypeId,itemType,spiceLevel,cuisineType);
+            client.sendRequest("addMenuItem", menuItem);
+            String response = (String) client.receiveStringResponse();
+            System.out.println("Server Response: " + response);
+            Authentication.activities.add("Menu item added");
+        } catch (Exception ex) {
+            System.out.println("Client Response: failed to add menu item");
+        }
     }
     
     @Override
     public void viewAllItems(){
-        client.sendRequest("viewAllItems", null);
-        List<MenuItem> menuItems;
         try {
+            client.sendRequest("viewAllItems", null);
+            List<MenuItem> menuItems;
             menuItems = (List<MenuItem>) client.receiveObjectResponse().readObject();
             System.out.println("Id \t Item Name \t Item Price \t Item Status \t Meal Type");
             for(MenuItem menuItem : menuItems) {
@@ -59,9 +69,9 @@ public  class MenuItemService implements IMenuItemService{
             }
             Authentication.activities.add("View all items");
         } catch (IOException ex) {
-            Logger.getLogger(MenuItemService.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Client Response: failed to convert server response");
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(MenuItemService.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Client Response: failed to view menu item");
         }
         
     }
@@ -87,6 +97,9 @@ public  class MenuItemService implements IMenuItemService{
             System.out.println("2) Item price");
             System.out.println("3) Item status");
             System.out.println("4) Item meal type");
+            System.out.println("5) Item type");
+            System.out.println("6) Item spice level");
+            System.out.println("7) Item cusisine type");
             System.out.print("Enter the id");
             int propertyId = scanner.nextInt();
             scanner.nextLine();
@@ -101,15 +114,27 @@ public  class MenuItemService implements IMenuItemService{
             } else if(propertyId == 4) {
                 menuItem.mealTypeId = scanner.nextInt();
                 scanner.nextLine();
+            } else if(propertyId == 5) {
+                menuItem.itemType = scanner.nextLine();
+                scanner.nextLine();
+            } else if(propertyId == 6) {
+                menuItem.spiceType = scanner.nextLine();
+                scanner.nextLine();
+            } else if(propertyId == 7) {
+                menuItem.cuisineType = scanner.nextLine();
+                scanner.nextLine();
+            } else {
+                System.out.println("Invalid choice");
+                return;
             }
             client.sendRequest("updateMenuItem", menuItem);
-            String response = (String) client.receiveResponse();
+            String response = (String) client.receiveStringResponse();
             System.out.println("Server Response: " + response);
             Authentication.activities.add("updated menu item");
         } catch (IOException ex) {
-            Logger.getLogger(MenuItemService.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(MenuItemService.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Client Response: failed to convert server response");
+        } catch (Exception ex) {
+            System.out.println("Client Response: failed to update item");
         }
         
     }
@@ -141,22 +166,26 @@ public  class MenuItemService implements IMenuItemService{
             int id = scanner.nextInt();
             MenuItem menuItem = this.getItemById(menuItems, id);
             client.sendRequest("deleteMenuItem", menuItem);
-            String response = (String) client.receiveResponse();
+            String response = (String) client.receiveStringResponse();
             System.out.println("Server Response: " + response);
             Authentication.activities.add("Deleted menu item");
         } catch (IOException ex) {
-            Logger.getLogger(MenuItemService.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Client Response: failed to convert server response");
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(MenuItemService.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Client Response: failed to delete item");
         }
         
     }
 
     @Override
     public void deleteMultipleItems(List<Integer> ids) {
-        client.sendRequest("deleteMenuItems", ids);
-        String response = (String) client.receiveResponse();
-        System.out.println("Server Response: " + response);
-        Authentication.activities.add("Removed discard items");
+        try {
+            client.sendRequest("deleteMenuItems", ids);
+            String response = (String) client.receiveStringResponse();
+            System.out.println("Server Response: " + response);
+            Authentication.activities.add("Removed discard items");
+        } catch (Exception ex) {
+            System.out.println("Client Response: failed to delete item");
+        }
     }
 }

@@ -62,35 +62,40 @@ public class DiscardItemService implements IDiscardItemService{
                 this.submitQuestions(itemIds);
             }
         } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(MenuItemService.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Client resposne - Failed to view discard items");
         }
     }
     
     private void submitQuestions(List<Integer> itemIds) throws IOException {
-        Scanner scanner = new Scanner(System.in);
-        List<AdminQuestions> questions = new ArrayList<>();
-        while (true) {
-            System.out.println("Enter question:");
-            AdminQuestions question = new AdminQuestions();
-            question.question = scanner.nextLine();
-            for(int i=0; i< itemIds.size();i++) {
-                question.menuItemId = itemIds.get(i);
-                questions.add(question);
-            }
+        try {
+            Scanner scanner = new Scanner(System.in);
+            List<AdminQuestions> questions = new ArrayList<>();
+            while (true) {
+                System.out.println("Enter question:");
+                String question = scanner.nextLine();
+                for(int i=0; i< itemIds.size();i++) {
+                    AdminQuestions adminQuestion = new AdminQuestions(0,question,itemIds.get(i));
+                    questions.add(adminQuestion);
+                }
 
-            System.out.println("Do you want to add more questions?");
-            System.out.println("If you want to add more questions, press y to continue and press n to exit.");
-            String choice = scanner.next();
-            if (choice.equalsIgnoreCase("y")) {
-                System.out.println("Adding more questions...");
-            } else if (choice.equalsIgnoreCase("n")) {
-                break;
-            } else {
-                System.out.println("Invalid choice. Please enter Y or N.");
+                System.out.println("Do you want to add more questions?");
+                System.out.println("If you want to add more questions, press y to continue and press n to exit.");
+                String choice = scanner.next();
+                if (choice.equalsIgnoreCase("y")) {
+                    System.out.println("Adding more questions...");
+                } else if (choice.equalsIgnoreCase("n")) {
+                    break;
+                } else {
+                    System.out.println("Invalid choice. Please enter Y or N.");
+                }
+                scanner.nextLine();
             }
-            scanner.nextLine();
+            client.sendRequest("submitquestions",questions);
+            String response = (String) client.receiveStringResponse();
+            System.out.println("Server Response: " + response);
+        } catch (Exception ex) {
+            System.out.println("Client Response: failed to submit questions");
         }
-        client.sendRequest("submitquestions",questions);
     }
     
     private List<Integer> getItemIdsByNames(List<DiscardItemInfo> items, String names) {
@@ -110,6 +115,12 @@ public class DiscardItemService implements IDiscardItemService{
     
     @Override
     public void deleteMultipleItems(List<Integer> ids) {
-        client.sendRequest("deleteDiscardItem", ids);
+        try {
+            client.sendRequest("deleteDiscardItem", ids);
+            String response = (String) client.receiveStringResponse();
+            System.out.println("Server Response: " + response);
+        } catch (Exception ex) {
+            System.out.println("Client Response: failed to delete items" );
+        }
     }
 }

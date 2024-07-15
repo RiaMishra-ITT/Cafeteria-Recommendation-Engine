@@ -20,8 +20,8 @@ public class Client {
             output = new ObjectOutputStream(socket.getOutputStream());
             input = new ObjectInputStream(socket.getInputStream());
             System.out.println("Server got connected");
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
         }
     }
 
@@ -35,16 +35,16 @@ public class Client {
             }
             
             output.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
         }
     }
 
-    public Object receiveResponse() {
+    public Object receiveStringResponse() {
         try {
             return input.readUTF();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
         }
         return null;
     }
@@ -56,8 +56,8 @@ public class Client {
     public void close() {
         try {
             socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
         }
     }
 }

@@ -8,15 +8,15 @@ import authentication.Authentication;
 import com.mycompany.recommendationsystemclient.Client;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import models.Feedback;
 import models.RolledOutItem;
+import models.UserVote;
 import services.Interfaces.IEmployeeService;
 
 /**
@@ -32,30 +32,34 @@ public class EmployeeService implements IEmployeeService {
     
     @Override
     public void submitFeedback() {
-        MenuItemService menuItemService = new MenuItemService(client);
-        menuItemService.viewAllItems();
-        System.out.println("Enter the item id against which you want to submit feedback");
-        int mealItemeId = scanner.nextInt();
-        scanner.nextLine();
-        System.out.println("Add Ratings");
-        String rating = scanner.nextLine();
-        System.out.println("Add Comment");
-        String comment = scanner.nextLine();
-        
-        LocalDate currentDate = LocalDate.now();
-        Feedback feedback = new Feedback(0,comment,rating,currentDate.toString(),mealItemeId,2);
-       
-        client.sendRequest("submitFeedback", feedback);
-        String response = (String) client.receiveResponse();
-        System.out.println("Server Response: " + response);
-        Authentication.activities.add("Feedback submitted");
+        try {
+            MenuItemService menuItemService = new MenuItemService(client);
+            menuItemService.viewAllItems();
+            System.out.println("Enter the item id against which you want to submit feedback");
+            int mealItemeId = scanner.nextInt();
+            scanner.nextLine();
+            System.out.println("Add Ratings");
+            String rating = scanner.nextLine();
+            System.out.println("Add Comment");
+            String comment = scanner.nextLine();
+
+            LocalDate currentDate = LocalDate.now();
+            Feedback feedback = new Feedback(0,comment,rating,currentDate.toString(),mealItemeId,2);
+
+            client.sendRequest("submitFeedback", feedback);
+            String response = (String) client.receiveStringResponse();
+            System.out.println("Server Response: " + response);
+            Authentication.activities.add("Feedback submitted");
+        } catch(Exception ex) {
+            System.out.println("Client Response: Failed to submit feedback" );
+        }
     }
     
     @Override
     public void viewRolledOutItems() {
-        client.sendRequest("viewRolledOutItem", null);
-        List<RolledOutItem> items;
         try {
+            client.sendRequest("viewRolledOutItem", Authentication.userId);
+            List<RolledOutItem> items;
             items = (List<RolledOutItem>) client.receiveObjectResponse().readObject();
             Set<Integer> seenIds = new HashSet<>();
             List<RolledOutItem> uniqueItems = new ArrayList<>();
@@ -71,10 +75,32 @@ public class EmployeeService implements IEmployeeService {
 
             }
             Authentication.activities.add("View rolled out items");
+            this.addVote();
         } catch (IOException ex) {
-            Logger.getLogger(MenuItemService.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(MenuItemService.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Client Response: Failed to convert server response" );
+        } catch (Exception ex) {
+            System.out.println("Client Response: Failed to view rolled out items" );
+        }
+    }
+    
+    private void addVote() {
+        try {
+            System.out.println("Add item id by space seperated to give vote");
+            String input = scanner.nextLine();
+            String[] ids = input.split(" ");
+            List<UserVote> allVotes = new ArrayList<>();
+            LocalDate today = LocalDate.now();
+            String formattedDate = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            for (String id : ids) {
+                UserVote userVote = new UserVote(0,Authentication.userId,Integer.parseInt(id),formattedDate);
+                allVotes.add(userVote);
+            }
+            client.sendRequest("addVote", allVotes);
+            String response = (String) client.receiveStringResponse();
+            System.out.println("Server Response: " + response);
+            Authentication.activities.add("Added vote");
+        } catch(Exception ex) {
+            System.out.println("Client Response: Failed to add vote" );
         }
     }
 }
