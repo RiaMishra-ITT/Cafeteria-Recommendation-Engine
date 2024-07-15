@@ -10,7 +10,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import models.MenuItem;
@@ -28,12 +27,15 @@ public class MenuItemRepository {
     }
     
     public int addMenuItem(MenuItem menuItem) throws SQLException {
-        String sql = "INSERT INTO menuItem (ItemName, Price, AvailbilityStatus,MealTypeId) VALUES (?, ?, ?,?)";
+        String sql = "INSERT INTO menuItem (ItemName, Price, AvailbilityStatus,MealTypeId,itemType,spiceLevel,cuisineType) VALUES (?, ?, ?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         pstmt.setString(1, menuItem.itemName);
         pstmt.setDouble(2, menuItem.price);
         pstmt.setString(3, menuItem.availbilityStatus);
         pstmt.setInt(4,menuItem.mealTypeId);
+        pstmt.setString(5, menuItem.itemType);
+        pstmt.setString(6, menuItem.spiceType);
+        pstmt.setString(7, menuItem.cuisineType);
 
         int rowInserted = pstmt.executeUpdate();
         return rowInserted;
@@ -46,21 +48,25 @@ public class MenuItemRepository {
         List<MenuItem> menuItems= new ArrayList<>();
         while(rs.next()) {
             menuItems.add(new MenuItem(rs.getInt("MenuItemId"),rs.getString("ItemName"),
-                    rs.getDouble("Price"),rs.getString("AvailbilityStatus"),rs.getInt("MealTypeId")));
+                    rs.getDouble("Price"),rs.getString("AvailbilityStatus"),rs.getInt("MealTypeId"), rs.getString("itemType"),rs.getString("spiceLevel"),rs.getString("cuisineType")));
         }
         
         return menuItems;
     }
     
     public int updateMenuItem(MenuItem menuItem) throws SQLException {
-        String sql = "UPDATE menuItem SET itemName = ?, price = ?, availbilityStatus = ?, mealTypeId = ? WHERE menuItemId = ?";
+        String sql = "UPDATE menuItem SET itemName = ?, price = ?, availbilityStatus = ?, mealTypeId = ?, itemType =?,spiceLevel = ? , cuisineType = ?  WHERE menuItemId = ?";
         PreparedStatement pstmt = conn.prepareStatement(sql);
 
         pstmt.setString(1, menuItem.itemName);
         pstmt.setDouble(2, menuItem.price);
         pstmt.setString(3, menuItem.availbilityStatus);
         pstmt.setInt(4, menuItem.mealTypeId);
-        pstmt.setInt(5, menuItem.menuItemId);
+        
+        pstmt.setString(5, menuItem.itemType);
+        pstmt.setString(6, menuItem.spiceType);
+        pstmt.setString(7, menuItem.cuisineType);
+        pstmt.setInt(8, menuItem.menuItemId);
 
         int rowsAffected = pstmt.executeUpdate();
         return rowsAffected;
@@ -74,7 +80,7 @@ public class MenuItemRepository {
         List<MenuItem> menuItems= new ArrayList<>();
         while(rs.next()) {
             menuItems.add(new MenuItem(rs.getInt("MenuItemId"),rs.getString("ItemName"),
-                    rs.getDouble("Price"),rs.getString("AvailbilityStatus"),rs.getInt("MealTypeId")));
+                    rs.getDouble("Price"),rs.getString("AvailbilityStatus"),rs.getInt("MealTypeId"), rs.getString("itemType"),rs.getString("spiceLevel"),rs.getString("cuisineType")));
         }
         
         return menuItems;
@@ -95,7 +101,7 @@ public class MenuItemRepository {
         MenuItem menuItem = new MenuItem();
         while(rs.next()) {
             menuItem = new MenuItem(rs.getInt("MenuItemId"),rs.getString("ItemName"),
-                    rs.getDouble("Price"),rs.getString("AvailbilityStatus"),rs.getInt("MealTypeId"));
+                    rs.getDouble("Price"),rs.getString("AvailbilityStatus"),rs.getInt("MealTypeId"), rs.getString("itemType"),rs.getString("spiceLevel"),rs.getString("cuisineType"));
         }
         return menuItem;
     }
@@ -103,12 +109,10 @@ public class MenuItemRepository {
     public void deleteMenuItems(List<Integer> itemIds) throws SQLException {
         String placeholders = String.join(",", Collections.nCopies(itemIds.size(), "?"));
         String sql = "DELETE FROM MenuItem WHERE menuItemId IN (" + placeholders + ")";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            for (int i = 0; i < itemIds.size(); i++) {
-                pstmt.setInt(i + 1, itemIds.get(i));
-            }
-            int rowsDeleted = pstmt.executeUpdate();
-            System.out.println(rowsDeleted + " items removed from the menu.");
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        for (int i = 0; i < itemIds.size(); i++) {
+            pstmt.setInt(i + 1, itemIds.get(i));
         }
+        pstmt.executeUpdate();
     }
 }

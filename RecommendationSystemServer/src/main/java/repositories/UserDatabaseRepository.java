@@ -26,22 +26,18 @@ public class UserDatabaseRepository {
         conn = database.getConnection();
     }
     
-    public User getUserByIdAndName(String userId, String name) {
+    public User getUserByIdAndName(String userId, String name) throws SQLException{
         String sql = "SELECT * " +
                      "FROM users u "+
                      "WHERE u.UserID = ? AND u.Name = ?";
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, userId);
-            pstmt.setString(2, name);
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1, userId);
+        pstmt.setString(2, name);
 
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                int id = Integer.parseInt(rs.getString("RoleId"));
-                return new User(id, rs.getString("Name"), rs.getInt("RoleId"));
-            }
-        } catch (SQLException se) {
-            se.printStackTrace();
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            int id = Integer.parseInt(rs.getString("RoleId"));
+            return new User(id, rs.getString("Name"), rs.getInt("RoleId"));
         }
         return null;
     }
@@ -62,13 +58,12 @@ public class UserDatabaseRepository {
     public void addUserActivities(UserActivities activity) throws SQLException {
         String sql = "INSERT INTO useractivity (userId, activities, logintime, logouttime) VALUES (?, ?, ?, ?)";
         
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, activity.userId);
-            pstmt.setString(2, activity.activities);
-            pstmt.setString(3, activity.logintime);
-            pstmt.setString(4, activity.logouttime);
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setInt(1, activity.userId);
+        pstmt.setString(2, activity.activities);
+        pstmt.setString(3, activity.logintime);
+        pstmt.setString(4, activity.logouttime);
             
-            pstmt.executeUpdate();
-        }
+        pstmt.executeUpdate();
     }
 }

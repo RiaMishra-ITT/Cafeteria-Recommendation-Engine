@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
+import models.AdminQuestions;
 import models.DiscardItemInfo;
 import models.MenuItem;
 import models.Notification;
@@ -21,15 +22,22 @@ import services.DiscardItemService;
 import services.FeedbackService;
 import services.Interfaces.IAdminQuestionsService;
 import services.Interfaces.IAuthService;
+import services.Interfaces.IChefService;
 import services.Interfaces.IDiscardItemService;
 import services.Interfaces.IFeedbackService;
 import services.Interfaces.IMenuItemService;
+import services.Interfaces.IProfileService;
 import services.Interfaces.IRoleService;
 import services.Interfaces.IUserActivityService;
 import services.Interfaces.IUserNotificationService;
+import services.Interfaces.IUserResponseService;
+import services.Interfaces.IUserVoteService;
+import services.ProfileService;
 import services.RoleService;
 import services.UserActivityService;
 import services.UserNotificationService;
+import services.UserResponseService;
+import services.UserVoteService;
 
 public class ServerOperations {
     public static void handleOperations(ObjectInputStream input, ObjectOutputStream output) throws IOException, ClassNotFoundException {
@@ -38,13 +46,15 @@ public class ServerOperations {
         {
             IMenuItemService menuItemService = new MenuItemService();
             IFeedbackService feedbackService = new FeedbackService();
-            ChefService chefService = new ChefService();
+            IChefService chefService = new ChefService();
             IUserNotificationService userNotificationService = new UserNotificationService();
             IDiscardItemService discardItemService = new DiscardItemService();
             IUserActivityService activityService = new UserActivityService();
             IAdminQuestionsService questionsService = new AdminQuestionsService();
+            IProfileService profileService = new ProfileService();
+            IUserResponseService userResponseService = new UserResponseService();
+            IUserVoteService userVoteService = new UserVoteService();
             String action = input.readUTF();
-            System.out.println(action);
             switch (action) {
                 case "login":
                     IAuthService authService = new AuthService();
@@ -75,6 +85,7 @@ public class ServerOperations {
                     menuItemService.removeMenuItem(input);
                     output.writeUTF("Item deleted succesfully");
                     output.flush();
+                    break;
                 case "rollOutItem":
                     List<MenuItem> nextDayItems = chefService.getFoodItemForNextDay(input);
                     output.writeObject(nextDayItems);
@@ -91,7 +102,7 @@ public class ServerOperations {
                     output.flush();
                     break;
                 case "viewRolledOutItem":
-                    List<RolledOutItem> items =  userNotificationService.getRolledOutItemNotifications();
+                    List<RolledOutItem> items =  userNotificationService.getRolledOutItemNotifications(input);
                     System.out.println(items.size());
                     output.writeObject(items);
                     output.flush();
@@ -121,11 +132,37 @@ public class ServerOperations {
                     output.writeUTF("Question added succesfully");
                     output.flush();
                     break;
+                case "updateProfile":
+                    profileService.updateProfile(input);
+                    output.writeUTF("Profile updated succesfully");
+                    output.flush();
+                    break;
+                case "viewquestions":
+                    int notificationId;
+                    notificationId = Integer.parseInt(input.readObject().toString());
+                    int menuItemId = userNotificationService.getMenuItemIdByNotification(notificationId);
+                    List<AdminQuestions> questions =  questionsService.getQuestionsByItemId(menuItemId);
+                    output.writeObject(questions);
+                    output.flush();
+                    break;
+                case "addResponse":
+                    userResponseService.addResponse(input);
+                    output.writeUTF("Response added succesfully");
+                    output.flush();
+                    break;
+                case "addVote":
+                    userVoteService.addUserVote(input);
+                    output.writeUTF("Vote added succesfully");
+                    output.flush();
+                    break;
                 default:
                     break;
             }
-        } catch(Exception ex) {
-            output.writeUTF(ex.toString());
+        } catch (ClassNotFoundException ex) {
+            output.writeUTF("Unable to load class: " + ex.getMessage());
+            output.flush();
+        } catch (Exception ex) {
+            output.writeUTF("An error occurred: " + ex.getMessage());
             output.flush();
         }
     }

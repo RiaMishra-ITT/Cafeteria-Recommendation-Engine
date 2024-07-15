@@ -34,7 +34,7 @@ public class DiscardItemRepository {
         for (int menuItemId : menuItemIds) {
             checkStmt.setInt(1, menuItemId);
             ResultSet rs = checkStmt.executeQuery();
-            if (rs.next() && rs.getInt(1) == 0) { // If the menuItemId does not exist
+            if (rs.next() && rs.getInt(1) == 0) { 
                 insertStmt.setInt(1, menuItemId);
                 insertStmt.addBatch();
             }

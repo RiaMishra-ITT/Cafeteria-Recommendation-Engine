@@ -7,7 +7,9 @@ package Repositories;
 import customexception.UnableToConnectDatabase;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import models.AdminQuestions;
 
@@ -34,5 +36,22 @@ public class AdminQuestionsRepository {
         
         int[] results = pstmt.executeBatch();
         return results.length;
+    }
+    
+    public List<AdminQuestions> getQuestionsByMenuItem(int menuItemId) throws SQLException {
+        String sql = "Select * from adminquestions where menuItemId = ?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setInt(1, menuItemId);
+        ResultSet rs = pstmt.executeQuery();
+        List<AdminQuestions> questions = new ArrayList<>();
+        while (rs.next()) {
+            questions.add(new AdminQuestions(
+                rs.getInt("questionId"),
+                rs.getString("question"),
+                    rs.getInt("menuItemId")
+            ));
+        }
+
+        return questions;
     }
 }

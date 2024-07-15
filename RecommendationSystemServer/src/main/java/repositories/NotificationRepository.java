@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import models.MenuItem;
 import models.Notification;
 import models.UserNotifcation;
 
@@ -52,7 +53,7 @@ public class NotificationRepository {
     }
     
     public List<Notification> getUserNotifications(int userId) throws SQLException {
-        String sql = "SELECT un.userId, n.datetime, n.notificationId, n.message " +
+        String sql = "SELECT un.userId, n.datetime, n.notificationId, n.message,n.notificationTypeId " +
                      "FROM UserNotification un " +
                      "JOIN Notification n ON un.notificationId = n.notificationId " +
                      "WHERE un.userId = ?";
@@ -63,8 +64,8 @@ public class NotificationRepository {
         ResultSet rs = pstmt.executeQuery();
         List<Notification> notifications = new ArrayList<>();
         while (rs.next()) {
-                int uid = rs.getInt("userId");
-                int nid = rs.getInt("notificationId");
+                int uid = rs.getInt("notificationId");
+                int nid = rs.getInt("notificationTypeId");
                 String message = rs.getString("message");
                 String datetime = rs.getString("datetime");
                 notifications.add(new Notification(uid, message,nid,datetime));
@@ -108,5 +109,19 @@ public class NotificationRepository {
         }
 
         return generatedId; 
+    }
+    
+    public int getMenuItemIdByNotification(int notificationId) throws SQLException {
+        String sql = "SELECT menuItemId from usernotification where notificationId = ?";
+        
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setInt(1, notificationId);
+
+        ResultSet rs = pstmt.executeQuery();
+        int menuItemId = 0;
+        while(rs.next()) {
+            menuItemId = rs.getInt("menuItemId");;
+        }
+        return menuItemId;
     }
 }
