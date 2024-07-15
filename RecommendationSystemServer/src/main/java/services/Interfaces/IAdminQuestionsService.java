@@ -6,6 +6,9 @@ package services.Interfaces;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.sql.SQLException;
+import java.util.List;
+import models.AdminQuestions;
 
 /**
  *
@@ -13,4 +16,5 @@ import java.io.ObjectInputStream;
  */
 public interface IAdminQuestionsService {
     public void addQuestions(ObjectInputStream input) throws IOException,ClassNotFoundException;
+    public List<AdminQuestions> getQuestionsByItemId(int menuItemId)  throws IOException,ClassNotFoundException, SQLException;
 }

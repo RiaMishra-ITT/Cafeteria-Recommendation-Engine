@@ -4,14 +4,13 @@
  */
 package services.Interfaces;
 
-import customexception.RoleNotFoundException;
 import java.io.IOException;
-import java.sql.SQLException;
+import java.io.ObjectInputStream;
 
 /**
  *
  * @author ria.mishra
  */
-public interface IRoleService {
-    String getRoleById(int id) throws RoleNotFoundException, IOException;
+public interface IUserVoteService {
+    public void addUserVote(ObjectInputStream input) throws IOException;
 }

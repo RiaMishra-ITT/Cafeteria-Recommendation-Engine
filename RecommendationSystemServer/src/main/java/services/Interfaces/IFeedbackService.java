@@ -15,7 +15,7 @@ import models.Feedback;
  * @author ria.mishra
  */
 public interface IFeedbackService {
-    List<Feedback> getFeedbackByItemId(int menuItemId) throws SQLException;
+    List<Feedback> getFeedbackByItemId(int menuItemId) throws IOException;
     void submitFeedback(ObjectInputStream input) throws SQLException, IOException, ClassNotFoundException;
-    String calculateSentiment(int menuItemId) throws SQLException;
+    String calculateSentiment(int menuItemId) throws IOException;
 }

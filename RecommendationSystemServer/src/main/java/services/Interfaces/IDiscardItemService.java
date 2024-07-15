@@ -5,12 +5,11 @@
 package services.Interfaces;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 import models.DiscardItemInfo;
 
 
 public interface IDiscardItemService {
-    public void addDiscardItem(List<Integer> menuItemIds) throws IOException, ClassNotFoundException, SQLException; 
-    public List<DiscardItemInfo> getDiscardedItemsWithRatings() throws SQLException;
+    public void addDiscardItem(List<Integer> menuItemIds) throws IOException, ClassNotFoundException; 
+    public List<DiscardItemInfo> getDiscardedItemsWithRatings() throws IOException;
 }

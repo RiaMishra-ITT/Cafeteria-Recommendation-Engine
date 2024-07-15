@@ -4,7 +4,7 @@
  */
 package services.Interfaces;
 
-import java.sql.SQLException;
+import java.io.IOException;
 import models.Notification;
 
 /**
@@ -12,5 +12,5 @@ import models.Notification;
  * @author ria.mishra
  */
 public interface INotificationService {
-    public int addNotification(Notification notification) throws SQLException;
+    public int addNotification(Notification notification) throws IOException;
 }

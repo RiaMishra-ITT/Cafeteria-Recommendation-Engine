@@ -18,9 +18,9 @@ import models.MenuItem;
  */
 public interface IMenuItemService {
     public void addMenuItem(ObjectInputStream input) throws IOException, ClassNotFoundException, SQLException, FailedToAddItemException  ;
-    public void removeMenuItem(ObjectInputStream input) throws SQLException, FailedToUpdateItemException, IOException, ClassNotFoundException ;
-    public List<MenuItem> getAllMenuItem() throws SQLException;
-    public void updateMenuItem(ObjectInputStream input) throws SQLException, FailedToUpdateItemException,IOException,ClassNotFoundException;
-    List<MenuItem> getItemsByMealType(int mealTypeId) throws SQLException;
-    public void removeMenuItems(ObjectInputStream input) throws SQLException, FailedToUpdateItemException, IOException, ClassNotFoundException ;
+    public void removeMenuItem(ObjectInputStream input) throws FailedToUpdateItemException, IOException, ClassNotFoundException ;
+    public List<MenuItem> getAllMenuItem() throws IOException, ClassNotFoundException;
+    public void updateMenuItem(ObjectInputStream input) throws FailedToUpdateItemException,IOException,ClassNotFoundException;
+    List<MenuItem> getItemsByMealType(int mealTypeId) throws IOException;
+    public void removeMenuItems(ObjectInputStream input) throws IOException, ClassNotFoundException ;
 }

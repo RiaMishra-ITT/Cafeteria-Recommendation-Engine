@@ -4,10 +4,15 @@
  */
 package services.Interfaces;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.List;
+import models.MenuItem;
+
 /**
  *
  * @author ria.mishra
  */
 public interface IChefService {
-    
+    List<MenuItem> getFoodItemForNextDay(ObjectInputStream input)throws IOException;
 }

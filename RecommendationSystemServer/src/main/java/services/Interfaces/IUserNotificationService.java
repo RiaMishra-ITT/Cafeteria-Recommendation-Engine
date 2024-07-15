@@ -18,8 +18,9 @@ import models.RolledOutItem;
  * @author ria.mishra
  */
 public interface IUserNotificationService {
-    void addNotification(ObjectInputStream input) throws IOException, ClassNotFoundException, SQLException,FailedToAddNotification;
-    List<RolledOutItem> getRolledOutItemNotifications() throws IOException, ClassNotFoundException, SQLException;
-    List<Notification> getUserNotifications(ObjectInputStream input) throws SQLException,IOException,ClassNotFoundException;
-    public void sendDetailFeedbackNotification(Set<Integer> menuItemId) throws IOException, ClassNotFoundException, SQLException,FailedToAddNotification;
+    void addNotification(ObjectInputStream input) throws IOException,FailedToAddNotification;
+    List<RolledOutItem> getRolledOutItemNotifications(ObjectInputStream input) throws IOException;
+    List<Notification> getUserNotifications(ObjectInputStream input) throws IOException;
+    public void sendDetailFeedbackNotification(Set<Integer> menuItemId) throws IOException;
+    public int getMenuItemIdByNotification(int notificationId) throws IOException;
 }
