@@ -17,49 +17,88 @@ import services.Interfaces.IMenuItemService;
 
 
 public class MenuItemService implements IMenuItemService{
-    private final MenuItemRepository dbOperation;
+    private final MenuItemRepository menuItemRepository;
     
     public MenuItemService() throws UnableToConnectDatabase {
-        this.dbOperation = new MenuItemRepository();
+        this.menuItemRepository = new MenuItemRepository();
     }
     
     @Override
-    public void addMenuItem(ObjectInputStream input) throws IOException, ClassNotFoundException, SQLException, FailedToAddItemException {
-       MenuItem menuItem = (MenuItem) input.readObject();
-       int totalRows = dbOperation.addMenuItem(menuItem);
-       if(totalRows <= 0) {
-           throw new FailedToAddItemException("Failed to add item");
-       }
+    public void addMenuItem(ObjectInputStream input) throws IOException, FailedToAddItemException {
+       try {
+           MenuItem menuItem = (MenuItem) input.readObject();
+           int totalRows = menuItemRepository.addMenuItem(menuItem);
+           if(totalRows <= 0) {
+            throw new FailedToAddItemException("Failed to add item");
+           }
+        } catch (SQLException ex) {
+            throw new IOException("Failed to add menu item");
+        } catch (Exception ex) {
+            throw new IOException ("Unexpected Server issue");
+        } 
     }
     
     @Override
-    public void removeMenuItem(ObjectInputStream input) throws SQLException, FailedToUpdateItemException, IOException, ClassNotFoundException {
-        MenuItem menuItem = (MenuItem) input.readObject();
-        dbOperation.deleteMenuItem(menuItem);
+    public void removeMenuItem(ObjectInputStream input) throws IOException {
+        try {
+            MenuItem menuItem = (MenuItem) input.readObject();
+            menuItemRepository.deleteMenuItem(menuItem);
+        } catch (SQLException ex) {
+            throw new IOException("Failed to remove menu item");
+        } catch (Exception ex) {
+            throw new IOException ("Unexpected Server issue");
+        } 
     }
 
     @Override
-    public List<MenuItem> getAllMenuItem() throws SQLException {
-        return dbOperation.getAllMenuItems();
+    public List<MenuItem> getAllMenuItem() throws IOException {
+        try {
+            return menuItemRepository.getAllMenuItems();
+        } catch (SQLException ex) {
+            throw new IOException("Failed to remove menu item");
+        } catch (Exception ex) {
+            throw new IOException ("Unexpected Server issue");
+        } 
     }
 
     @Override
-    public void updateMenuItem(ObjectInputStream input) throws SQLException, FailedToUpdateItemException, IOException, ClassNotFoundException {
-        MenuItem menuItem = (MenuItem) input.readObject();
-        int totalRows = dbOperation.updateMenuItem(menuItem);
-        if(totalRows <= 0) {
-            throw new FailedToUpdateItemException("Failed to update item");
-        }
+    public void updateMenuItem(ObjectInputStream input) throws FailedToUpdateItemException, IOException {
+        try {
+            MenuItem menuItem = (MenuItem) input.readObject();
+            int totalRows = menuItemRepository.updateMenuItem(menuItem);
+            if(totalRows <= 0) {
+                throw new FailedToUpdateItemException("Failed to update item");
+            }
+        } catch (SQLException ex) {
+            throw new IOException("Failed to updated menu item");
+        } catch (Exception ex) {
+            throw new IOException ("Unexpected Server issue");
+        } 
+        
     }
     
     @Override
-    public List<MenuItem> getItemsByMealType(int mealTypeId) throws SQLException {
-        return dbOperation.getItemsByMealType(mealTypeId);
+    public List<MenuItem> getItemsByMealType(int mealTypeId) throws IOException {
+        try {
+            return menuItemRepository.getItemsByMealType(mealTypeId);
+        } catch (SQLException ex) {
+            throw new IOException("Failed to get item by meal type");
+        } catch (Exception ex) {
+            throw new IOException ("Unexpected Server issue");
+        } 
+        
     }
 
     @Override
-    public void removeMenuItems(ObjectInputStream input) throws SQLException, FailedToUpdateItemException, IOException, ClassNotFoundException {
-        List<Integer> ids = (List<Integer>) input.readObject();
-        dbOperation.deleteMenuItems(ids);
+    public void removeMenuItems(ObjectInputStream input) throws IOException {
+        try {
+            List<Integer> ids = (List<Integer>) input.readObject();
+            menuItemRepository.deleteMenuItems(ids);
+        } catch (SQLException ex) {
+            throw new IOException("Failed to remove items");
+        } catch (Exception ex) {
+            throw new IOException ("Unexpected Server issue");
+        } 
+        
     }
 }

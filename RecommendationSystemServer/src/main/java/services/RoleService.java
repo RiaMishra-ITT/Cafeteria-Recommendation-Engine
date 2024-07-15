@@ -7,6 +7,7 @@ package services;
 import customexception.RoleNotFoundException;
 import customexception.UnableToConnectDatabase;
 import Repositories.RoleDatabaseRepository;
+import java.io.IOException;
 import java.sql.SQLException;
 import models.Role;
 import services.Interfaces.IRoleService;
@@ -16,20 +17,29 @@ import services.Interfaces.IRoleService;
  * @author ria.mishra
  */
 public class RoleService implements IRoleService {
-    private final RoleDatabaseRepository dbOperation;
+    private final RoleDatabaseRepository releRepository;
 
     public RoleService() throws UnableToConnectDatabase {
-        this.dbOperation = new RoleDatabaseRepository();
+        this.releRepository = new RoleDatabaseRepository();
     }
     
     @Override
-    public String getRoleById(int id) throws RoleNotFoundException, SQLException{
-        Role role = dbOperation.getRoleById(id);
-        if(role == null) {
-            throw new RoleNotFoundException("Invalid role");
+    public String getRoleById(int id) throws RoleNotFoundException, IOException{
+        try {
+            Role role = releRepository.getRoleById(id);
+            if(role == null) {
+                throw new RoleNotFoundException("Invalid role");
+            }
+
+            return role.role;
+        } catch (RoleNotFoundException ex) {
+            throw ex;
+        } catch (SQLException ex) {
+            throw new IOException("Failed to update profile");
+        } catch (Exception ex) {
+            throw new IOException ("Unexpected Server issue");
         }
         
-        return role.role;
     }
     
 }

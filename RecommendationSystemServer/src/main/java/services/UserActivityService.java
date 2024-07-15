@@ -17,15 +17,22 @@ import services.Interfaces.IUserActivityService;
  * @author ria.mishra
  */
 public class UserActivityService implements IUserActivityService{
-    private final UserDatabaseRepository dbOperation;
+    private final UserDatabaseRepository userRepository;
 
     public UserActivityService() throws UnableToConnectDatabase {
-        this.dbOperation = new UserDatabaseRepository();
+        this.userRepository = new UserDatabaseRepository();
     }
     @Override
-    public void addUserActivity(ObjectInputStream input) throws IOException, ClassNotFoundException, SQLException {
-        UserActivities userActivity = (UserActivities) input.readObject();
-        dbOperation.addUserActivities(userActivity);
+    public void addUserActivity(ObjectInputStream input) throws IOException {
+        try {
+            UserActivities userActivity = (UserActivities) input.readObject();
+            userRepository.addUserActivities(userActivity);
+        }  catch (SQLException ex) {
+            throw new IOException("Failed to add user activity");
+        } catch (Exception ex) {
+            throw new IOException ("Unexpected Server issue");
+        } 
+        
     }
     
 }

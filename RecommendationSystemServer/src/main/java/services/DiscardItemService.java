@@ -17,39 +17,51 @@ import services.Interfaces.IDiscardItemService;
 
 
 public class DiscardItemService implements IDiscardItemService {
-    private final DiscardItemRepository discardItemDbOperation;
+    private final DiscardItemRepository discardItemRepository;
     private final FeedbackService feedbackService = new FeedbackService();
     private final SemanticAnalysisService semanticAnalysisService = new SemanticAnalysisService();
 
     public DiscardItemService() throws UnableToConnectDatabase {
-        this.discardItemDbOperation = new DiscardItemRepository();
+        this.discardItemRepository = new DiscardItemRepository();
     }
     
     @Override
-    public void addDiscardItem(List<Integer> menuItemIds) throws IOException, ClassNotFoundException, SQLException {
-        discardItemDbOperation.addDiscardItems(menuItemIds);
+    public void addDiscardItem(List<Integer> menuItemIds) throws IOException {
+        try {
+            discardItemRepository.addDiscardItems(menuItemIds);
+        } catch (SQLException ex) {
+            throw new IOException("Failed to add discard item");
+        } catch (Exception ex) {
+            throw new IOException ("Unexpected Server issue");
+        }  
     }
 
     @Override
-    public List<DiscardItemInfo> getDiscardedItemsWithRatings() throws SQLException {
-        List<DiscardItemInfo> discardItems = discardItemDbOperation.getDiscardedItemsWithRatings();
-        for(int i=0;i<discardItems.size();i++) {
-            Set<String> specificSentiments = new HashSet<>();
-            List<Feedback> feedbacks = feedbackService.getFeedbackByItemId(discardItems.get(i).menuItemId);
-            double rating = 0;
-            for(int j = 0; j< feedbacks.size();j++) {
-                String sentiment = semanticAnalysisService.calculateAverageSentiment(feedbacks.get(j).comment);
-                if (!sentiment.equals("Neutral")) {
-                    specificSentiments.add(sentiment);
+    public List<DiscardItemInfo> getDiscardedItemsWithRatings() throws IOException {
+        try {
+            List<DiscardItemInfo> discardItems = discardItemRepository.getDiscardedItemsWithRatings();
+            for(int i=0;i<discardItems.size();i++) {
+                Set<String> specificSentiments = new HashSet<>();
+                List<Feedback> feedbacks = feedbackService.getFeedbackByItemId(discardItems.get(i).menuItemId);
+                double rating = 0;
+                for(int j = 0; j< feedbacks.size();j++) {
+                    String sentiment = semanticAnalysisService.calculateAverageSentiment(feedbacks.get(j).comment);
+                    if (!sentiment.equals("Neutral")) {
+                        specificSentiments.add(sentiment);
+                    }
+
+                    rating = rating + feedbacks.get(j).rating.length();
                 }
-                
-                rating = rating + feedbacks.get(j).rating.length();
+                discardItems.get(i).sentiment = String.join(", ", specificSentiments);
+                discardItems.get(i).rating = Double.toString(rating / 5);
             }
-            discardItems.get(i).sentiment = String.join(", ", specificSentiments);
-            discardItems.get(i).rating = Double.toString(rating / 5);
-        }
-        
-        return discardItems;
+
+            return discardItems;
+        } catch (SQLException ex) {
+            throw new IOException("Failed to get discard items");
+        } catch (Exception ex) {
+            throw new IOException ("Unexpected Server issue");
+        } 
     }
     
 }
