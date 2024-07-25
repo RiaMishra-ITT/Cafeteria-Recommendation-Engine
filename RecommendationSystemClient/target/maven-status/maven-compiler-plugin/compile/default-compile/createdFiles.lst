@@ -1,0 +1,13 @@
+com\mycompany\recommendationsystemclient\Client.class
+models\MenuItem.class
+com\mycompany\recommendationsystemclient\RecommendationSystemClient.class
+services\EmployeeService.class
+models\User.class
+chef\ChefOperation.class
+authentication\Authentication.class
+admin\AdminOperation.class
+employee\EmployeeOperation.class
+models\Feedback.class
+services\RollOutItemService.class
+services\MenuItemService.class
+models\RolledOutItem.class
